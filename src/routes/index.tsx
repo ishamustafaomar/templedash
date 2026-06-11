@@ -1,7 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState, useCallback } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useServerFn } from "@tanstack/react-start";
+import { useQueryClient } from "@tanstack/react-query";
 import { AnimatePresence } from "framer-motion";
 import { Crosshair } from "lucide-react";
 import { GameEngine, type PowerupType } from "@/components/game/GameEngine";
@@ -17,12 +16,13 @@ import { PowerUpActivationFlash } from "@/components/game/PowerUpActivationFlash
 import { TripOverlay } from "@/components/game/TripOverlay";
 import { getCharacter } from "@/lib/characters";
 import { useSoundManager } from "@/lib/useSoundManager";
-import { getMyProfile, updateMyProfile } from "@/lib/profile.functions";
+import { useProfile } from "@/lib/useProfile";
 import { supabase } from "@/integrations/supabase/client";
 
 type GameState = "start" | "charselect" | "playing" | "over";
 
-export const Route = createFileRoute("/_authenticated/")({
+export const Route = createFileRoute("/")({
+  ssr: false,
   head: () => ({
     meta: [
       { title: "Temple Dash — Endless Runner" },
@@ -37,13 +37,7 @@ function powerupDur(level: number, base: number) { return base + (level - 1) * 2
 function GamePage() {
   const navigate = useNavigate();
   const qc = useQueryClient();
-  const fetchProfile = useServerFn(getMyProfile);
-  const saveProfile = useServerFn(updateMyProfile);
-  const { data: profile } = useQuery({ queryKey: ["profile"], queryFn: () => fetchProfile() });
-  const saveMut = useMutation({
-    mutationFn: (data: Record<string, number | boolean>) => saveProfile({ data: data as any }),
-    onSuccess: (data) => qc.setQueryData(["profile"], data),
-  });
+  const { profile, isGuest, save } = useProfile();
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const engineRef = useRef<GameEngine | null>(null);
@@ -93,7 +87,7 @@ function GamePage() {
           total_coins: profile.total_coins + earnedCoins,
         };
         if (newHigh) updates.high_score = final.score;
-        try { await saveMut.mutateAsync(updates as any); } catch (e) { console.error(e); }
+        try { await save(updates as any); } catch (e) { console.error(e); }
         setGameState("over");
       },
     }, char);
@@ -110,11 +104,10 @@ function GamePage() {
     engine.start();
     setGameState("playing");
     setScore(0); setCoins(0); setDistance(0);
-  }, [profile, sound, tiltEnabled, saveMut]);
+  }, [profile, sound, tiltEnabled, save]);
 
   useEffect(() => () => { engineRef.current?.dispose(); }, []);
 
-  // Tilt setup
   useEffect(() => {
     if (!tiltEnabled) return;
     const handler = (e: DeviceOrientationEvent) => {
@@ -156,7 +149,6 @@ function GamePage() {
     await qc.cancelQueries();
     qc.clear();
     await supabase.auth.signOut();
-    navigate({ to: "/auth", replace: true });
   };
 
   return (
@@ -192,6 +184,8 @@ function GamePage() {
             highScore={profile?.high_score ?? 0}
             tiltEnabled={tiltEnabled}
             onToggleTilt={handleToggleTilt}
+            isGuest={isGuest}
+            onSignIn={() => navigate({ to: "/auth" })}
             onSignOut={handleSignOut}
             onPlay={() => setGameState("charselect")}
           />

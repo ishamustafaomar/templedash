@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { Link } from "@tanstack/react-router";
-import { Play, ShoppingBag, Smartphone, LogOut } from "lucide-react";
+import { Play, ShoppingBag, Smartphone, LogOut, Cloud } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 
@@ -8,11 +8,13 @@ interface Props {
   onPlay: () => void;
   tiltEnabled: boolean;
   onToggleTilt: () => void;
+  onSignIn: () => void;
   onSignOut: () => void;
+  isGuest: boolean;
   highScore: number;
 }
 
-export function StartScreen({ onPlay, tiltEnabled, onToggleTilt, onSignOut, highScore }: Props) {
+export function StartScreen({ onPlay, tiltEnabled, onToggleTilt, onSignIn, onSignOut, isGuest, highScore }: Props) {
   const isMobile = typeof navigator !== "undefined" && /Mobi|Android/i.test(navigator.userAgent);
   return (
     <motion.div
@@ -53,10 +55,22 @@ export function StartScreen({ onPlay, tiltEnabled, onToggleTilt, onSignOut, high
         <Button asChild variant="outline" size="lg" className="font-cinzel">
           <Link to="/shop"><ShoppingBag className="mr-2" /> Shop</Link>
         </Button>
-        <Button onClick={onSignOut} variant="ghost" size="sm" className="text-muted-foreground">
-          <LogOut className="mr-2 w-4 h-4" /> Sign out
-        </Button>
+        {isGuest ? (
+          <Button onClick={onSignIn} variant="ghost" size="sm" className="text-muted-foreground">
+            <Cloud className="mr-2 w-4 h-4" /> Back up progress to the cloud
+          </Button>
+        ) : (
+          <Button onClick={onSignOut} variant="ghost" size="sm" className="text-muted-foreground">
+            <LogOut className="mr-2 w-4 h-4" /> Sign out
+          </Button>
+        )}
       </div>
+
+      {isGuest && (
+        <p className="mt-3 text-xs text-muted-foreground/70 text-center max-w-xs">
+          Playing as guest — progress saves on this device.
+        </p>
+      )}
     </motion.div>
   );
 }
