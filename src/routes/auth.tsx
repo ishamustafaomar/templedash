@@ -16,6 +16,8 @@ export const Route = createFileRoute("/auth")({
 function AuthPage() {
   const navigate = useNavigate();
   const router = useRouter();
+  const search = useSearch({ from: "/auth" });
+  const redirectTo = typeof search.redirect === "string" ? search.redirect : "/";
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -24,9 +26,9 @@ function AuthPage() {
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
-      if (data.user) navigate({ to: "/", replace: true });
+      if (data.user) navigate({ to: redirectTo, replace: true });
     });
-  }, [navigate]);
+  }, [navigate, redirectTo]);
 
   const submit = async (mode: "signin" | "signup") => {
     setLoading(true); setErr(null); setInfo(null);
