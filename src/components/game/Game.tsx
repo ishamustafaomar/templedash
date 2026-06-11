@@ -91,8 +91,8 @@ function World({ coinMultiplier, powerupDurations, onCoin, onPowerup, onCrash, o
     const coins3d = s.coins3d.map((c) => ({ ...c, z: c.z + dz })).filter((c) => c.z < DESPAWN_BEHIND && !c.collected);
     const powerups3d = s.powerups3d.map((p) => ({ ...p, z: p.z + dz })).filter((p) => p.z < DESPAWN_BEHIND);
 
-    // Spawn chunks ahead
-    let nextSpawnZ = s.nextSpawnZ;
+    // Spawn chunks ahead — advance cursor with the world so we keep spawning forever
+    let nextSpawnZ = s.nextSpawnZ + dz;
     let chunkIdx = 0;
     while (nextSpawnZ > -SPAWN_AHEAD) {
       const addPU = Math.random() < 0.25;
