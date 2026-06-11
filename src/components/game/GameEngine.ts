@@ -79,6 +79,18 @@ export class GameEngine {
   private coinObjs: CoinObj[] = [];
   private powerups: PowerupObj[] = [];
 
+  // Reusable shared materials/geometries
+  private wallTexture!: THREE.CanvasTexture;
+  private floorTexture!: THREE.CanvasTexture;
+  private wallMat!: THREE.MeshStandardMaterial;
+  private floorMat!: THREE.MeshStandardMaterial;
+  private pillarMat!: THREE.MeshStandardMaterial;
+
+  // Atmosphere
+  private torches: { light: THREE.PointLight; baseIntensity: number; flame: THREE.Mesh; }[] = [];
+  private dust!: THREE.Points;
+  private dustVelocities!: Float32Array;
+
   private activePowerups: Record<PowerupType, boolean> = {
     shield: false, magnet: false, speed: false, invincibility: false,
   };
@@ -104,6 +116,9 @@ export class GameEngine {
     this.character = character;
     this.slideDuration *= character.slideDurationMultiplier;
     this.initScene();
+    this.buildSharedMaterials();
+    this.buildSky();
+    this.buildDust();
     this.buildPlayer();
     this.generateInitialTiles();
     this.bindKeys();
@@ -117,24 +132,79 @@ export class GameEngine {
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     this.renderer.shadowMap.enabled = true;
     this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    this.renderer.toneMappingExposure = 1.1;
 
     this.scene = new THREE.Scene();
-    this.scene.background = new THREE.Color(0x1a0f0a);
-    this.scene.fog = new THREE.FogExp2(0x1a0f0a, 0.012);
+    this.scene.background = new THREE.Color(0x140a06);
+    this.scene.fog = new THREE.FogExp2(0x1a0d07, 0.018);
 
-    this.camera = new THREE.PerspectiveCamera(65, 1, 0.1, 200);
+    this.camera = new THREE.PerspectiveCamera(68, 1, 0.1, 220);
     this.camera.position.set(0, 5.5, 8);
     this.camera.lookAt(0, 1, -10);
 
-    this.scene.add(new THREE.AmbientLight(0xffd59e, 0.5));
-    const dir = new THREE.DirectionalLight(0xffeedd, 1.2);
-    dir.position.set(5, 12, 5);
+    this.scene.add(new THREE.AmbientLight(0xffc28a, 0.35));
+    const dir = new THREE.DirectionalLight(0xffe2b5, 0.9);
+    dir.position.set(6, 14, 4);
     dir.castShadow = true;
     dir.shadow.mapSize.set(1024, 1024);
+    dir.shadow.camera.left = -10; dir.shadow.camera.right = 10;
+    dir.shadow.camera.top = 10; dir.shadow.camera.bottom = -10;
     this.scene.add(dir);
-    const pl = new THREE.PointLight(0xff8844, 0.8, 30);
-    pl.position.set(0, 8, -5);
-    this.scene.add(pl);
+    // Warm rim from "torchlight ahead"
+    const rim = new THREE.PointLight(0xff7733, 1.0, 28);
+    rim.position.set(0, 6, -10);
+    this.scene.add(rim);
+  }
+
+  private buildSharedMaterials() {
+    this.wallTexture = makeWallTexture();
+    this.wallTexture.wrapS = this.wallTexture.wrapT = THREE.RepeatWrapping;
+    this.wallTexture.repeat.set(2, 1);
+    this.floorTexture = makeFloorTexture();
+    this.floorTexture.wrapS = this.floorTexture.wrapT = THREE.RepeatWrapping;
+    this.floorTexture.repeat.set(2, 3);
+    this.wallMat = new THREE.MeshStandardMaterial({ map: this.wallTexture, roughness: 0.95, color: 0x9c7a55 });
+    this.floorMat = new THREE.MeshStandardMaterial({ map: this.floorTexture, roughness: 1, color: 0x7a5535 });
+    this.pillarMat = new THREE.MeshStandardMaterial({ color: 0x3a2818, roughness: 0.9 });
+  }
+
+  private buildSky() {
+    // Inside-out gradient dome
+    const geo = new THREE.SphereGeometry(120, 24, 16);
+    const mat = new THREE.ShaderMaterial({
+      side: THREE.BackSide,
+      depthWrite: false,
+      uniforms: {
+        topColor: { value: new THREE.Color(0x0a0503) },
+        bottomColor: { value: new THREE.Color(0x3a1808) },
+      },
+      vertexShader: `varying vec3 vP; void main(){ vP = position; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0);} `,
+      fragmentShader: `varying vec3 vP; uniform vec3 topColor; uniform vec3 bottomColor; void main(){ float h = normalize(vP).y * 0.5 + 0.5; gl_FragColor = vec4(mix(bottomColor, topColor, h), 1.0);} `,
+    });
+    this.scene.add(new THREE.Mesh(geo, mat));
+  }
+
+  private buildDust() {
+    const COUNT = 220;
+    const positions = new Float32Array(COUNT * 3);
+    this.dustVelocities = new Float32Array(COUNT * 3);
+    for (let i = 0; i < COUNT; i++) {
+      positions[i * 3] = (Math.random() - 0.5) * 9;
+      positions[i * 3 + 1] = Math.random() * 5 + 0.5;
+      positions[i * 3 + 2] = -Math.random() * 100;
+      this.dustVelocities[i * 3] = (Math.random() - 0.5) * 0.15;
+      this.dustVelocities[i * 3 + 1] = (Math.random() - 0.5) * 0.08;
+      this.dustVelocities[i * 3 + 2] = 0;
+    }
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+    const mat = new THREE.PointsMaterial({
+      color: 0xffd6a0, size: 0.05, transparent: true, opacity: 0.45,
+      depthWrite: false, blending: THREE.AdditiveBlending, sizeAttenuation: true,
+    });
+    this.dust = new THREE.Points(geo, mat);
+    this.scene.add(this.dust);
   }
 
   private buildPlayer() {
@@ -257,24 +327,64 @@ export class GameEngine {
 
   private addTile(index: number, z: number) {
     const group = new THREE.Group();
-    const pathMat = new THREE.MeshStandardMaterial({ color: 0x5a3a22, roughness: 0.95 });
-    const wallMat = new THREE.MeshStandardMaterial({ color: 0x2a1810, roughness: 1 });
-    const floor = new THREE.Mesh(new THREE.BoxGeometry(9.5, 0.3, TILE_LENGTH), pathMat);
+    const floor = new THREE.Mesh(new THREE.BoxGeometry(9.5, 0.3, TILE_LENGTH), this.floorMat);
     floor.position.y = 0; floor.receiveShadow = true;
-    const wL = new THREE.Mesh(new THREE.BoxGeometry(0.5, 4, TILE_LENGTH), wallMat);
+    const wL = new THREE.Mesh(new THREE.BoxGeometry(0.5, 4, TILE_LENGTH), this.wallMat);
     wL.position.set(-4.75, 2, 0);
     const wR = wL.clone(); wR.position.x = 4.75;
     group.add(floor, wL, wR);
 
+    // Stone trim along floor edges
+    const trimMat = new THREE.MeshStandardMaterial({ color: 0x4a321e, roughness: 0.9 });
+    const trimGeo = new THREE.BoxGeometry(0.4, 0.4, TILE_LENGTH);
+    const trL = new THREE.Mesh(trimGeo, trimMat); trL.position.set(-4.3, 0.2, 0);
+    const trR = trL.clone(); trR.position.x = 4.3;
+    group.add(trL, trR);
+
+    // Cracked stone arches every 2 tiles
+    if (index % 2 === 0) {
+      const archMat = new THREE.MeshStandardMaterial({ color: 0x5a3e22, roughness: 0.85 });
+      const lintel = new THREE.Mesh(new THREE.BoxGeometry(10, 0.6, 0.6), archMat);
+      lintel.position.set(0, 4.2, 0);
+      group.add(lintel);
+    }
+
+    // Carved pillars + torches every 3 tiles
     if (index % 3 === 0) {
-      const pillarMat = new THREE.MeshStandardMaterial({ color: 0x3a2818 });
-      const p1 = new THREE.Mesh(new THREE.BoxGeometry(0.7, 4.5, 0.7), pillarMat);
-      p1.position.set(-4.2, 2.2, 0);
+      const p1 = new THREE.Mesh(new THREE.BoxGeometry(0.7, 4.5, 0.7), this.pillarMat);
+      p1.position.set(-4.2, 2.2, 0); p1.castShadow = true;
       const p2 = p1.clone(); p2.position.x = 4.2;
       group.add(p1, p2);
-      const torch = new THREE.PointLight(0xff6622, 1.2, 14);
-      torch.position.set(0, 3.5, 0);
-      group.add(torch);
+
+      // Torches with flickering flames
+      for (const px of [-4.0, 4.0]) {
+        const sconce = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.06, 0.1, 0.4, 6),
+          new THREE.MeshStandardMaterial({ color: 0x2a1a10 }),
+        );
+        sconce.position.set(px, 3.0, 0);
+        const flame = new THREE.Mesh(
+          new THREE.ConeGeometry(0.18, 0.5, 8),
+          new THREE.MeshBasicMaterial({ color: 0xffaa33, transparent: true, opacity: 0.95 }),
+        );
+        flame.position.set(px, 3.4, 0);
+        const light = new THREE.PointLight(0xff7733, 1.4, 12);
+        light.position.set(px, 3.4, 0);
+        group.add(sconce, flame, light);
+        this.torches.push({ light, baseIntensity: 1.4, flame });
+      }
+    }
+
+    // Occasional hanging vines (decorative)
+    if (index % 4 === 1) {
+      const vineMat = new THREE.MeshStandardMaterial({ color: 0x2a4a18, roughness: 1 });
+      for (let i = 0; i < 3; i++) {
+        const x = (Math.random() - 0.5) * 9;
+        const len = 0.8 + Math.random() * 1.2;
+        const v = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.02, len, 4), vineMat);
+        v.position.set(x, 4 - len / 2, (Math.random() - 0.5) * TILE_LENGTH * 0.8);
+        group.add(v);
+      }
     }
 
     group.position.z = z;
@@ -586,6 +696,12 @@ export class GameEngine {
     // Recycle tiles
     while (this.tiles.length && this.tiles[0].z > TILE_LENGTH * 2) {
       const t = this.tiles.shift()!;
+      // Remove torches that belong to this tile
+      this.torches = this.torches.filter(tor => {
+        let p: THREE.Object3D | null = tor.flame;
+        while (p) { if (p === t.group) return false; p = p.parent; }
+        return true;
+      });
       this.scene.remove(t.group);
       this.obstacles = this.obstacles.filter(o => {
         if (o.tileZ === t.spawnZ) { this.scene.remove(o.mesh); return false; }
@@ -602,6 +718,29 @@ export class GameEngine {
       const last = this.tiles[this.tiles.length - 1];
       this.addTile(last.index + 1, last.z - TILE_LENGTH);
     }
+
+    // Torch flicker
+    const tNow = performance.now() / 1000;
+    for (const tor of this.torches) {
+      const f = 0.75 + Math.sin(tNow * 18 + tor.flame.position.x) * 0.15 + Math.random() * 0.1;
+      tor.light.intensity = tor.baseIntensity * f;
+      tor.flame.scale.y = 0.85 + f * 0.25;
+    }
+
+    // Dust drift (relative to player)
+    const dp = this.dust.geometry.attributes.position as THREE.BufferAttribute;
+    const arr = dp.array as Float32Array;
+    for (let i = 0; i < arr.length; i += 3) {
+      arr[i] += this.dustVelocities[i] * dt;
+      arr[i + 1] += this.dustVelocities[i + 1] * dt;
+      arr[i + 2] += this.speed * dt * 0.6;
+      if (arr[i + 2] > 12) {
+        arr[i] = (Math.random() - 0.5) * 9;
+        arr[i + 1] = Math.random() * 5 + 0.5;
+        arr[i + 2] = -90 - Math.random() * 20;
+      }
+    }
+    dp.needsUpdate = true;
 
     // Tilt steering
     if (this.tiltEnabled && this.tiltBaseline != null) {
@@ -780,4 +919,70 @@ export class GameEngine {
       return;
     }
   }
+}
+
+// ===== Procedural textures =====
+function makeWallTexture(): THREE.CanvasTexture {
+  const c = document.createElement("canvas");
+  c.width = 512; c.height = 512;
+  const ctx = c.getContext("2d")!;
+  // Base stone gradient
+  const g = ctx.createLinearGradient(0, 0, 0, 512);
+  g.addColorStop(0, "#3a2614");
+  g.addColorStop(0.5, "#5a3e22");
+  g.addColorStop(1, "#3a2614");
+  ctx.fillStyle = g; ctx.fillRect(0, 0, 512, 512);
+  // Stone block grout lines
+  ctx.strokeStyle = "#1a0e06"; ctx.lineWidth = 3;
+  for (let y = 0; y < 512; y += 64) {
+    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(512, y); ctx.stroke();
+    const offset = (y / 64) % 2 === 0 ? 0 : 64;
+    for (let x = offset; x < 512; x += 128) {
+      ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x, y + 64); ctx.stroke();
+    }
+  }
+  // Noise speckles for weathering
+  for (let i = 0; i < 2000; i++) {
+    ctx.fillStyle = `rgba(${20 + Math.random() * 40},${15 + Math.random() * 30},10,${Math.random() * 0.3})`;
+    ctx.fillRect(Math.random() * 512, Math.random() * 512, 2, 2);
+  }
+  // A few hieroglyph-like symbols
+  ctx.fillStyle = "#1a0e06";
+  ctx.font = "32px serif";
+  const glyphs = ["☥", "𓂀", "𓆣", "𓊽", "𓁹", "𓇯"];
+  for (let i = 0; i < 8; i++) {
+    ctx.fillText(glyphs[i % glyphs.length], 40 + (i % 4) * 120, 100 + Math.floor(i / 4) * 180);
+  }
+  const tex = new THREE.CanvasTexture(c);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  return tex;
+}
+
+function makeFloorTexture(): THREE.CanvasTexture {
+  const c = document.createElement("canvas");
+  c.width = 512; c.height = 512;
+  const ctx = c.getContext("2d")!;
+  ctx.fillStyle = "#5a3a22"; ctx.fillRect(0, 0, 512, 512);
+  // Cobblestones
+  ctx.strokeStyle = "#2a1810"; ctx.lineWidth = 2;
+  for (let y = 0; y < 512; y += 96) {
+    for (let x = 0; x < 512; x += 96) {
+      const px = x + (Math.random() - 0.5) * 8;
+      const py = y + (Math.random() - 0.5) * 8;
+      ctx.fillStyle = `rgb(${70 + Math.random() * 40},${50 + Math.random() * 30},${30 + Math.random() * 20})`;
+      ctx.beginPath();
+      ctx.roundRect(px, py, 86 + Math.random() * 8, 86 + Math.random() * 8, 8);
+      ctx.fill(); ctx.stroke();
+    }
+  }
+  // Wet/dirt blotches
+  for (let i = 0; i < 80; i++) {
+    ctx.fillStyle = `rgba(20,12,5,${Math.random() * 0.25})`;
+    ctx.beginPath();
+    ctx.arc(Math.random() * 512, Math.random() * 512, 10 + Math.random() * 30, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  const tex = new THREE.CanvasTexture(c);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  return tex;
 }
