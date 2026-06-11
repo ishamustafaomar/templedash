@@ -1,13 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useServerFn } from "@tanstack/react-start";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, Coins, ShoppingBag } from "lucide-react";
-import { getMyProfile, updateMyProfile } from "@/lib/profile.functions";
+import { useProfile } from "@/lib/useProfile";
 import { ShopItemCard, SHOP_ITEMS, levelCost, type ShopItem } from "@/components/shop/ShopItemCard";
 
 export const Route = createFileRoute("/shop")({
+  ssr: false,
   head: () => ({
     meta: [
       { title: "Temple Shop — Upgrades" },
@@ -18,16 +17,9 @@ export const Route = createFileRoute("/shop")({
 });
 
 function ShopPage() {
-  const qc = useQueryClient();
-  const fetchProfile = useServerFn(getMyProfile);
-  const saveProfile = useServerFn(updateMyProfile);
-  const { data: profile, isLoading } = useQuery({ queryKey: ["profile"], queryFn: () => fetchProfile() });
+  const { profile, ready, save } = useProfile();
   const [toast, setToast] = useState<{ kind: "ok" | "err"; msg: string } | null>(null);
-
-  const mut = useMutation({
-    mutationFn: (data: any) => saveProfile({ data }),
-    onSuccess: (data) => { qc.setQueryData(["profile"], data); },
-  });
+  const [busy, setBusy] = useState(false);
 
   const purchase = async (item: ShopItem) => {
     if (!profile) return;
@@ -49,12 +41,13 @@ function ShopPage() {
       return;
     }
     updates.total_coins = profile.total_coins - cost;
+    setBusy(true);
     try {
-      await mut.mutateAsync(updates);
+      await save(updates as any);
       setToast({ kind: "ok", msg: `${item.title} unlocked!` });
     } catch {
       setToast({ kind: "err", msg: "Purchase failed." });
-    }
+    } finally { setBusy(false); }
     setTimeout(() => setToast(null), 2800);
   };
 
@@ -68,7 +61,7 @@ function ShopPage() {
           <div className="flex items-center gap-2 rounded-full border border-primary/40 bg-primary/10 px-3 py-1.5">
             <Coins className="w-4 h-4 text-primary" />
             <span className="font-cinzel font-bold text-primary tabular-nums">
-              {isLoading ? "—" : profile?.total_coins ?? 0}
+              {!ready ? "—" : profile?.total_coins ?? 0}
             </span>
           </div>
         </div>
@@ -84,11 +77,11 @@ function ShopPage() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {isLoading
+          {!ready
             ? Array.from({ length: 6 }).map((_, i) => <div key={i} className="h-40 rounded-2xl bg-card animate-pulse" />)
             : SHOP_ITEMS.map((item, i) => (
               <motion.div key={item.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}>
-                <ShopItemCard item={item} profile={profile!} onBuy={purchase} busy={mut.isPending} />
+                <ShopItemCard item={item} profile={profile!} onBuy={purchase} busy={busy} />
               </motion.div>
             ))}
         </div>
