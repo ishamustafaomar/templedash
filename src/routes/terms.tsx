@@ -8,7 +8,9 @@ export const Route = createFileRoute("/terms")({
       { name: "description", content: "The rules for using Temple Dash and purchasing in-game items." },
       { property: "og:title", content: "Terms of Service — Temple Dash" },
       { property: "og:description", content: "The rules for using Temple Dash and purchasing in-game items." },
+      { property: "og:url", content: "https://templedash.fun/terms" },
     ],
+    links: [{ rel: "canonical", href: "https://templedash.fun/terms" }],
   }),
   component: TermsPage,
 });
