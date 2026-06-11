@@ -79,6 +79,18 @@ export class GameEngine {
   private coinObjs: CoinObj[] = [];
   private powerups: PowerupObj[] = [];
 
+  // Reusable shared materials/geometries
+  private wallTexture!: THREE.CanvasTexture;
+  private floorTexture!: THREE.CanvasTexture;
+  private wallMat!: THREE.MeshStandardMaterial;
+  private floorMat!: THREE.MeshStandardMaterial;
+  private pillarMat!: THREE.MeshStandardMaterial;
+
+  // Atmosphere
+  private torches: { light: THREE.PointLight; baseIntensity: number; flame: THREE.Mesh; }[] = [];
+  private dust!: THREE.Points;
+  private dustVelocities!: Float32Array;
+
   private activePowerups: Record<PowerupType, boolean> = {
     shield: false, magnet: false, speed: false, invincibility: false,
   };
