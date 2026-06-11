@@ -104,9 +104,13 @@ function ShopPage() {
           <div className="flex items-baseline justify-between mb-4">
             <h2 className="font-cinzel font-bold text-xl">Coin Packs</h2>
             {!signedIn && (
-              <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
+              <Link
+                to="/auth"
+                search={{ redirect: "/shop" }}
+                className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-primary transition-colors underline-offset-2 hover:underline"
+              >
                 <Lock className="w-3 h-3" /> Sign in to purchase
-              </span>
+              </Link>
             )}
           </div>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
