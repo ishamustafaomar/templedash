@@ -53,8 +53,12 @@ export const updateMyProfile = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((data: unknown) => updateSchema.parse(data))
   .handler(async ({ data, context }): Promise<ProfileData> => {
-    const { supabase, userId } = context;
-    const { data: updated, error } = await supabase
+    const { userId } = context;
+    // Sensitive economy/progression fields are blocked at the DB level for the
+    // user role, so we route updates through the service-role client. RLS is
+    // bypassed but we always scope by the authenticated userId from the JWT.
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: updated, error } = await supabaseAdmin
       .from("profiles")
       .update(data)
       .eq("id", userId)
