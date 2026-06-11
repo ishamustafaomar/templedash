@@ -33,9 +33,8 @@ async function creditCoinsForSession(session: any, env: StripeEnv) {
     return;
   }
 
-  const sb = getSupabase();
+  const sb: any = getSupabase();
 
-  // Idempotency: insert purchase record; if it conflicts, we've already credited.
   const { error: insertErr } = await sb.from("coin_purchases").insert({
     user_id: userId,
     stripe_session_id: sessionId,
@@ -46,7 +45,7 @@ async function creditCoinsForSession(session: any, env: StripeEnv) {
     environment: env,
   });
   if (insertErr) {
-    if ((insertErr as any).code === "23505") {
+    if (insertErr.code === "23505") {
       console.log("Purchase already processed:", sessionId);
       return;
     }
@@ -61,7 +60,7 @@ async function creditCoinsForSession(session: any, env: StripeEnv) {
     .maybeSingle();
   if (readErr) throw readErr;
 
-  const current = (profile?.total_coins as number | undefined) ?? 0;
+  const current: number = profile?.total_coins ?? 0;
   const { error: updateErr } = await sb
     .from("profiles")
     .update({ total_coins: current + coins })
