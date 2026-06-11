@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { Link } from "@tanstack/react-router";
-import { Play, ShoppingBag, Smartphone, LogOut, Cloud } from "lucide-react";
+import { Play, ShoppingBag, Smartphone, LogOut, Cloud, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 
@@ -60,9 +60,14 @@ export function StartScreen({ onPlay, tiltEnabled, onToggleTilt, onSignIn, onSig
             <Cloud className="mr-2 w-4 h-4" /> Back up progress to the cloud
           </Button>
         ) : (
-          <Button onClick={onSignOut} variant="ghost" size="sm" className="text-muted-foreground">
-            <LogOut className="mr-2 w-4 h-4" /> Sign out
-          </Button>
+          <>
+            <Button asChild variant="ghost" size="sm" className="text-muted-foreground">
+              <Link to="/settings"><Settings className="mr-2 w-4 h-4" /> Settings</Link>
+            </Button>
+            <Button onClick={onSignOut} variant="ghost" size="sm" className="text-muted-foreground">
+              <LogOut className="mr-2 w-4 h-4" /> Sign out
+            </Button>
+          </>
         )}
       </div>
 
@@ -71,6 +76,12 @@ export function StartScreen({ onPlay, tiltEnabled, onToggleTilt, onSignIn, onSig
           Playing as guest — progress saves on this device.
         </p>
       )}
+
+      <p className="mt-6 text-[11px] text-muted-foreground/60 text-center">
+        <Link to="/privacy" className="hover:text-foreground">Privacy</Link>
+        {" · "}
+        <Link to="/terms" className="hover:text-foreground">Terms</Link>
+      </p>
     </motion.div>
   );
 }
