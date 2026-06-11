@@ -216,7 +216,7 @@ function World({ coinMultiplier, powerupDurations, onCoin, onPowerup, onCrash, o
 
     if (crashed && !crashedRef.current) {
       crashedRef.current = true;
-      onSound?.("crash");
+      onSound?.("collision");
       onCrash();
       const final = { score: Math.floor(s.score + scoreAdd), coins: s.coins + coinAdd, distance: s.distance };
       // briefly delay so the crash registers
