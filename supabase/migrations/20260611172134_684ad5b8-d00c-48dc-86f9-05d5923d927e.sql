@@ -1,0 +1,2 @@
+
+REVOKE ALL ON FUNCTION public.profiles_block_sensitive_self_update() FROM PUBLIC, anon, authenticated;
