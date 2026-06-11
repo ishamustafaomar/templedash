@@ -181,7 +181,7 @@ function World({ coinMultiplier, powerupDurations, onCoin, onPowerup, onCrash, o
         active[pickedPU] = true;
       }
       onPowerup(pickedPU);
-      onSound?.("powerup");
+      onSound?.(pickedPU);
     }
 
     // Handle crash with shield/invincibility
@@ -192,7 +192,7 @@ function World({ coinMultiplier, powerupDurations, onCoin, onPowerup, onCrash, o
         shieldCount -= 1;
         if (shieldCount === 0) active.shield = false;
         crashed = false;
-        onSound?.("shield");
+        onSound?.("shieldBreak");
       }
     }
 
