@@ -14,7 +14,51 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      profiles: {
+        Row: {
+          coin_multiplier: boolean
+          created_at: string
+          display_name: string | null
+          head_start: boolean
+          high_score: number
+          id: string
+          invincibility_level: number
+          magnet_level: number
+          shield_level: number
+          speed_level: number
+          total_coins: number
+          updated_at: string
+        }
+        Insert: {
+          coin_multiplier?: boolean
+          created_at?: string
+          display_name?: string | null
+          head_start?: boolean
+          high_score?: number
+          id: string
+          invincibility_level?: number
+          magnet_level?: number
+          shield_level?: number
+          speed_level?: number
+          total_coins?: number
+          updated_at?: string
+        }
+        Update: {
+          coin_multiplier?: boolean
+          created_at?: string
+          display_name?: string | null
+          head_start?: boolean
+          high_score?: number
+          id?: string
+          invincibility_level?: number
+          magnet_level?: number
+          shield_level?: number
+          speed_level?: number
+          total_coins?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
