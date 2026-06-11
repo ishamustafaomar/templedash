@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion";
-import type { PowerupType } from "./GameEngine";
+import type { PowerupType } from "./engine/types";
 
 const COLORS: Record<PowerupType, string> = {
   shield: "#4488ff", magnet: "#ff44aa", speed: "#ffaa00", invincibility: "#aa44ff",
