@@ -51,6 +51,11 @@ export const createCoinCheckout = createServerFn({ method: "POST" })
       const email = (claims as any)?.email as string | undefined;
       const stripe = createStripeClient(data.environment);
 
+      // Build the return URL server-side from the request's own origin to
+      // prevent open-redirect abuse via a client-supplied returnUrl.
+      const reqUrl = getRequestUrl();
+      const safeReturnUrl = `${reqUrl.origin}/checkout/return?session_id={CHECKOUT_SESSION_ID}`;
+
       const prices = await stripe.prices.list({ lookup_keys: [data.priceId] });
       if (!prices.data.length) throw new Error("Price not found");
       const stripePrice = prices.data[0];
@@ -66,7 +71,7 @@ export const createCoinCheckout = createServerFn({ method: "POST" })
         line_items: [{ price: stripePrice.id, quantity: 1 }],
         mode: "payment",
         ui_mode: "embedded_page",
-        return_url: data.returnUrl,
+        return_url: safeReturnUrl,
         customer: customerId,
         payment_intent_data: { description: product.name },
         metadata: { userId, priceId: data.priceId },
