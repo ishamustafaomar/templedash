@@ -1,5 +1,5 @@
 import { Shield, Magnet, Zap, Sparkles } from "lucide-react";
-import type { PowerupType } from "./GameEngine";
+import type { PowerupType } from "./engine/types";
 
 const ICONS: Record<PowerupType, React.ReactNode> = {
   shield: <Shield className="w-4 h-4" />,
