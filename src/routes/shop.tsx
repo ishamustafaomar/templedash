@@ -7,7 +7,7 @@ import { ArrowLeft, Coins, ShoppingBag } from "lucide-react";
 import { getMyProfile, updateMyProfile } from "@/lib/profile.functions";
 import { ShopItemCard, SHOP_ITEMS, levelCost, type ShopItem } from "@/components/shop/ShopItemCard";
 
-export const Route = createFileRoute("/_authenticated/shop")({
+export const Route = createFileRoute("/shop")({
   head: () => ({
     meta: [
       { title: "Temple Shop — Upgrades" },
