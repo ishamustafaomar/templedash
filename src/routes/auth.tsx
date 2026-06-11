@@ -43,9 +43,9 @@ function AuthPage() {
     } finally { setLoading(false); }
   };
 
-  const google = async () => {
+  const apple = async () => {
     setLoading(true); setErr(null);
-    const result = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin });
+    const result = await lovable.auth.signInWithOAuth("apple", { redirect_uri: window.location.origin });
     if (result.error) { setErr((result.error as Error).message); setLoading(false); return; }
     if (result.redirected) return;
     navigate({ to: "/", replace: true });
@@ -57,8 +57,9 @@ function AuthPage() {
         <h1 className="font-cinzel font-black text-4xl text-center text-primary text-glow-gold">Temple Dash</h1>
         <p className="text-center text-muted-foreground text-sm mt-1">Sign in to save your progress</p>
 
-        <Button onClick={google} disabled={loading} variant="outline" className="w-full mt-6 font-cinzel">
-          Continue with Google
+        <Button onClick={apple} disabled={loading} variant="outline" className="w-full mt-6 font-cinzel gap-2">
+          <svg viewBox="0 0 24 24" className="h-4 w-4" fill="currentColor" aria-hidden="true"><path d="M16.365 1.43c0 1.14-.43 2.23-1.21 3.03-.83.86-2.18 1.52-3.3 1.43-.14-1.12.4-2.28 1.18-3.08.83-.86 2.27-1.5 3.33-1.38zM20.5 17.07c-.55 1.27-.82 1.84-1.54 2.96-1 1.56-2.42 3.5-4.18 3.52-1.56.02-1.96-1.02-4.08-1.01-2.12.01-2.56 1.03-4.12 1.01-1.76-.02-3.1-1.77-4.1-3.33C0.7 17.05.42 12.15 2.46 9.5c1.45-1.88 3.74-2.98 5.9-2.98 2.2 0 3.58 1.2 5.4 1.2 1.76 0 2.83-1.2 5.37-1.2 1.92 0 3.95 1.04 5.4 2.84-4.74 2.6-3.97 9.37 .0 7.71z"/></svg>
+          Continue with Apple
         </Button>
 
         <div className="my-6 flex items-center gap-3 text-xs text-muted-foreground">
