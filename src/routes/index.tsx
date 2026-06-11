@@ -28,7 +28,9 @@ export const Route = createFileRoute("/")({
     meta: [
       { title: "Temple Dash — Endless Runner" },
       { name: "description", content: "Run, dodge and collect coins through an ancient temple in this 3D endless runner." },
+      { property: "og:url", content: "https://templedash.fun/" },
     ],
+    links: [{ rel: "canonical", href: "https://templedash.fun/" }],
   }),
   component: GamePage,
 });

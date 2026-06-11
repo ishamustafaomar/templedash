@@ -8,7 +8,9 @@ export const Route = createFileRoute("/privacy")({
       { name: "description", content: "How Temple Dash collects, uses, and protects your data." },
       { property: "og:title", content: "Privacy Policy — Temple Dash" },
       { property: "og:description", content: "How Temple Dash collects, uses, and protects your data." },
+      { property: "og:url", content: "https://templedash.fun/privacy" },
     ],
+    links: [{ rel: "canonical", href: "https://templedash.fun/privacy" }],
   }),
   component: PrivacyPage,
 });

@@ -27,17 +27,14 @@ export function CoinPackCard({
           <Icon className="w-5 h-5" />
         </div>
         {pack.bonusLabel && (
-          <span
-            className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full"
-            style={{ backgroundColor: `${pack.accent}22`, color: pack.accent }}
-          >
+          <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-foreground text-background">
             {pack.bonusLabel}
           </span>
         )}
       </div>
       <div>
         <h3 className="font-cinzel font-bold text-lg">{pack.title}</h3>
-        <p className="text-2xl font-bold tabular-nums" style={{ color: pack.accent }}>
+        <p className="text-2xl font-bold tabular-nums text-foreground">
           {pack.coins.toLocaleString()} <span className="text-sm text-muted-foreground font-normal">coins</span>
         </p>
       </div>

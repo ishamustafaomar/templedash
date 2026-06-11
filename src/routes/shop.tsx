@@ -17,7 +17,9 @@ export const Route = createFileRoute("/shop")({
     meta: [
       { title: "Temple Shop — Upgrades & Coin Packs" },
       { name: "description", content: "Buy coin packs or spend coins on permanent power-up upgrades." },
+      { property: "og:url", content: "https://templedash.fun/shop" },
     ],
+    links: [{ rel: "canonical", href: "https://templedash.fun/shop" }],
   }),
   component: ShopPage,
 });
