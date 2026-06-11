@@ -97,6 +97,12 @@ function AuthPage() {
           <Link to="/" className="text-primary hover:underline">Play as guest</Link>
           {" "}— your progress saves on this device.
         </p>
+        <p className="mt-4 text-center text-[11px] text-muted-foreground/70">
+          By signing up you agree to our{" "}
+          <Link to="/terms" className="text-primary hover:underline">Terms</Link>
+          {" and "}
+          <Link to="/privacy" className="text-primary hover:underline">Privacy Policy</Link>.
+        </p>
       </div>
     </div>
   );
