@@ -151,7 +151,6 @@ function ShopPage() {
           </motion.div>
         )}
       </AnimatePresence>
-      </AnimatePresence>
 
       <AnimatePresence>
         {checkoutPack && (
