@@ -116,6 +116,9 @@ export class GameEngine {
     this.character = character;
     this.slideDuration *= character.slideDurationMultiplier;
     this.initScene();
+    this.buildSharedMaterials();
+    this.buildSky();
+    this.buildDust();
     this.buildPlayer();
     this.generateInitialTiles();
     this.bindKeys();
