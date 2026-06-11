@@ -1,16 +1,22 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, Coins, ShoppingBag } from "lucide-react";
+import { ArrowLeft, Coins, ShoppingBag, X, Lock } from "lucide-react";
 import { useProfile } from "@/lib/useProfile";
 import { ShopItemCard, SHOP_ITEMS, levelCost, type ShopItem } from "@/components/shop/ShopItemCard";
+import { CoinPackCard } from "@/components/shop/CoinPackCard";
+import { COIN_PACKS, type CoinPack } from "@/lib/coinPacks";
+import { StripeEmbeddedCheckout } from "@/components/StripeEmbeddedCheckout";
+import { PaymentTestModeBanner } from "@/components/PaymentTestModeBanner";
+import { supabase } from "@/integrations/supabase/client";
+import { useEffect } from "react";
 
 export const Route = createFileRoute("/shop")({
   ssr: false,
   head: () => ({
     meta: [
-      { title: "Temple Shop — Upgrades" },
-      { name: "description", content: "Spend coins on permanent power-up upgrades." },
+      { title: "Temple Shop — Upgrades & Coin Packs" },
+      { name: "description", content: "Buy coin packs or spend coins on permanent power-up upgrades." },
     ],
   }),
   component: ShopPage,
@@ -20,6 +26,23 @@ function ShopPage() {
   const { profile, ready, save } = useProfile();
   const [toast, setToast] = useState<{ kind: "ok" | "err"; msg: string } | null>(null);
   const [busy, setBusy] = useState(false);
+  const [checkoutPack, setCheckoutPack] = useState<CoinPack | null>(null);
+  const [signedIn, setSignedIn] = useState(false);
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => setSignedIn(!!data.user));
+    const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => setSignedIn(!!s?.user));
+    return () => sub.subscription.unsubscribe();
+  }, []);
+
+  const onBuyPack = (pack: CoinPack) => {
+    if (!signedIn) {
+      setToast({ kind: "err", msg: "Sign in to purchase coins." });
+      setTimeout(() => setToast(null), 2800);
+      return;
+    }
+    setCheckoutPack(pack);
+  };
 
   const purchase = async (item: ShopItem) => {
     if (!profile) return;
