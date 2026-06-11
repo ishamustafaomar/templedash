@@ -83,11 +83,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:title", content: "Temple Dash — Endless Runner" },
       { property: "og:description", content: "Run, dodge and collect coins through an ancient temple in this 3D endless runner." },
       { property: "og:type", content: "website" },
-      { property: "og:image", content: "/apple-touch-icon.png" },
+      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/20f7d023-39c0-44ee-b4cd-407a3e15d832" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "Temple Dash — Endless Runner" },
       { name: "twitter:description", content: "Run, dodge and collect coins through an ancient temple in this 3D endless runner." },
-      { name: "twitter:image", content: "/apple-touch-icon.png" },
+      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/20f7d023-39c0-44ee-b4cd-407a3e15d832" },
       { name: "theme-color", content: "#0f172a" },
     ],
     links: [
