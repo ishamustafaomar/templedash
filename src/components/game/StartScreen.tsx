@@ -56,15 +56,15 @@ export function StartScreen({ onPlay, tiltEnabled, onToggleTilt, onSignIn, onSig
           <Link to="/shop"><ShoppingBag className="mr-2" /> Shop</Link>
         </Button>
         {isGuest ? (
-          <Button onClick={onSignIn} variant="ghost" size="sm" className="text-muted-foreground">
+          <Button onClick={onSignIn} variant="ghost" className="text-muted-foreground min-h-11">
             <Cloud className="mr-2 w-4 h-4" /> Back up progress to the cloud
           </Button>
         ) : (
           <>
-            <Button asChild variant="ghost" size="sm" className="text-muted-foreground">
+            <Button asChild variant="ghost" className="text-muted-foreground min-h-11">
               <Link to="/settings"><Settings className="mr-2 w-4 h-4" /> Settings</Link>
             </Button>
-            <Button onClick={onSignOut} variant="ghost" size="sm" className="text-muted-foreground">
+            <Button onClick={onSignOut} variant="ghost" className="text-muted-foreground min-h-11">
               <LogOut className="mr-2 w-4 h-4" /> Sign out
             </Button>
           </>
@@ -77,10 +77,9 @@ export function StartScreen({ onPlay, tiltEnabled, onToggleTilt, onSignIn, onSig
         </p>
       )}
 
-      <p className="mt-6 text-[11px] text-muted-foreground/60 text-center">
-        <Link to="/privacy" className="hover:text-foreground">Privacy</Link>
-        {" · "}
-        <Link to="/terms" className="hover:text-foreground">Terms</Link>
+      <p className="mt-6 text-sm text-muted-foreground/70 text-center flex items-center justify-center gap-4">
+        <Link to="/privacy" className="hover:text-foreground inline-flex items-center min-h-11 px-3">Privacy</Link>
+        <Link to="/terms" className="hover:text-foreground inline-flex items-center min-h-11 px-3">Terms</Link>
       </p>
     </motion.div>
   );

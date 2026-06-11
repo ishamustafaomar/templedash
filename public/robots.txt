@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /settings
+Disallow: /auth
+Disallow: /checkout/
+
+Sitemap: https://templedash.fun/sitemap.xml
