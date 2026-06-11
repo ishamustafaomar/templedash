@@ -22,7 +22,7 @@ import { supabase } from "@/integrations/supabase/client";
 
 type GameState = "start" | "charselect" | "playing" | "over";
 
-export const Route = createFileRoute("/_authenticated/")({
+export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "Temple Dash — Endless Runner" },
