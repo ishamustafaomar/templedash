@@ -41,7 +41,7 @@ function GamePage() {
   const saveProfile = useServerFn(updateMyProfile);
   const { data: profile } = useQuery({ queryKey: ["profile"], queryFn: () => fetchProfile() });
   const saveMut = useMutation({
-    mutationFn: (data: Parameters<typeof saveProfile>[0]["data"]) => saveProfile({ data }),
+    mutationFn: (data: Record<string, number | boolean>) => saveProfile({ data: data as any }),
     onSuccess: (data) => qc.setQueryData(["profile"], data),
   });
 
