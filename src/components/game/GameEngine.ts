@@ -920,3 +920,69 @@ export class GameEngine {
     }
   }
 }
+
+// ===== Procedural textures =====
+function makeWallTexture(): THREE.CanvasTexture {
+  const c = document.createElement("canvas");
+  c.width = 512; c.height = 512;
+  const ctx = c.getContext("2d")!;
+  // Base stone gradient
+  const g = ctx.createLinearGradient(0, 0, 0, 512);
+  g.addColorStop(0, "#3a2614");
+  g.addColorStop(0.5, "#5a3e22");
+  g.addColorStop(1, "#3a2614");
+  ctx.fillStyle = g; ctx.fillRect(0, 0, 512, 512);
+  // Stone block grout lines
+  ctx.strokeStyle = "#1a0e06"; ctx.lineWidth = 3;
+  for (let y = 0; y < 512; y += 64) {
+    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(512, y); ctx.stroke();
+    const offset = (y / 64) % 2 === 0 ? 0 : 64;
+    for (let x = offset; x < 512; x += 128) {
+      ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x, y + 64); ctx.stroke();
+    }
+  }
+  // Noise speckles for weathering
+  for (let i = 0; i < 2000; i++) {
+    ctx.fillStyle = `rgba(${20 + Math.random() * 40},${15 + Math.random() * 30},10,${Math.random() * 0.3})`;
+    ctx.fillRect(Math.random() * 512, Math.random() * 512, 2, 2);
+  }
+  // A few hieroglyph-like symbols
+  ctx.fillStyle = "#1a0e06";
+  ctx.font = "32px serif";
+  const glyphs = ["☥", "𓂀", "𓆣", "𓊽", "𓁹", "𓇯"];
+  for (let i = 0; i < 8; i++) {
+    ctx.fillText(glyphs[i % glyphs.length], 40 + (i % 4) * 120, 100 + Math.floor(i / 4) * 180);
+  }
+  const tex = new THREE.CanvasTexture(c);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  return tex;
+}
+
+function makeFloorTexture(): THREE.CanvasTexture {
+  const c = document.createElement("canvas");
+  c.width = 512; c.height = 512;
+  const ctx = c.getContext("2d")!;
+  ctx.fillStyle = "#5a3a22"; ctx.fillRect(0, 0, 512, 512);
+  // Cobblestones
+  ctx.strokeStyle = "#2a1810"; ctx.lineWidth = 2;
+  for (let y = 0; y < 512; y += 96) {
+    for (let x = 0; x < 512; x += 96) {
+      const px = x + (Math.random() - 0.5) * 8;
+      const py = y + (Math.random() - 0.5) * 8;
+      ctx.fillStyle = `rgb(${70 + Math.random() * 40},${50 + Math.random() * 30},${30 + Math.random() * 20})`;
+      ctx.beginPath();
+      ctx.roundRect(px, py, 86 + Math.random() * 8, 86 + Math.random() * 8, 8);
+      ctx.fill(); ctx.stroke();
+    }
+  }
+  // Wet/dirt blotches
+  for (let i = 0; i < 80; i++) {
+    ctx.fillStyle = `rgba(20,12,5,${Math.random() * 0.25})`;
+    ctx.beginPath();
+    ctx.arc(Math.random() * 512, Math.random() * 512, 10 + Math.random() * 30, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  const tex = new THREE.CanvasTexture(c);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  return tex;
+}
