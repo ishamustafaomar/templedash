@@ -96,8 +96,30 @@ function ShopPage() {
           <div className="inline-flex items-center gap-2 text-primary font-semibold uppercase tracking-widest text-xs mb-3">
             <ShoppingBag className="w-4 h-4" /> Temple Shop
           </div>
-          <h1 className="font-cinzel font-bold text-4xl md:text-5xl mb-2">Upgrades</h1>
-          <p className="text-muted-foreground">Spend your coins to unlock permanent upgrades across every run.</p>
+          <h1 className="font-cinzel font-bold text-4xl md:text-5xl mb-2">Shop</h1>
+          <p className="text-muted-foreground">Buy coin packs, then spend coins on permanent upgrades.</p>
+        </div>
+
+        <section className="mb-12">
+          <div className="flex items-baseline justify-between mb-4">
+            <h2 className="font-cinzel font-bold text-xl">Coin Packs</h2>
+            {!signedIn && (
+              <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
+                <Lock className="w-3 h-3" /> Sign in to purchase
+              </span>
+            )}
+          </div>
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+            {COIN_PACKS.map((pack, i) => (
+              <motion.div key={pack.priceId} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.04 }}>
+                <CoinPackCard pack={pack} onBuy={onBuyPack} />
+              </motion.div>
+            ))}
+          </div>
+        </section>
+
+        <div className="flex items-baseline justify-between mb-4">
+          <h2 className="font-cinzel font-bold text-xl">Upgrades</h2>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -126,6 +148,42 @@ function ShopPage() {
             }`}
           >
             {toast.msg}
+          </motion.div>
+        )}
+      </AnimatePresence>
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {checkoutPack && (
+          <motion.div
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto"
+            onClick={() => setCheckoutPack(null)}
+          >
+            <motion.div
+              initial={{ scale: 0.95, y: 10 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.95, y: 10 }}
+              onClick={(e) => e.stopPropagation()}
+              className="relative bg-card rounded-2xl border border-border max-w-xl w-full my-8"
+            >
+              <div className="flex items-center justify-between p-4 border-b border-border">
+                <div>
+                  <h3 className="font-cinzel font-bold">{checkoutPack.title}</h3>
+                  <p className="text-xs text-muted-foreground">
+                    {checkoutPack.coins.toLocaleString()} coins · {checkoutPack.priceLabel}
+                  </p>
+                </div>
+                <button
+                  onClick={() => setCheckoutPack(null)}
+                  className="rounded-full p-2 hover:bg-muted transition"
+                  aria-label="Close checkout"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+              <div className="p-4">
+                <StripeEmbeddedCheckout priceId={checkoutPack.priceId} />
+              </div>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
