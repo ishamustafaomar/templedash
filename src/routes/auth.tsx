@@ -51,7 +51,7 @@ function AuthPage() {
         }
       }
       router.invalidate();
-      navigate({ to: "/", replace: true });
+      navigate({ to: redirectTo, replace: true });
     } catch (e: any) {
       setErr(e?.message || "Auth failed");
     } finally { setLoading(false); }
