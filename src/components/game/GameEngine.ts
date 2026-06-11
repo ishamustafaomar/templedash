@@ -696,6 +696,12 @@ export class GameEngine {
     // Recycle tiles
     while (this.tiles.length && this.tiles[0].z > TILE_LENGTH * 2) {
       const t = this.tiles.shift()!;
+      // Remove torches that belong to this tile
+      this.torches = this.torches.filter(tor => {
+        let p: THREE.Object3D | null = tor.flame;
+        while (p) { if (p === t.group) return false; p = p.parent; }
+        return true;
+      });
       this.scene.remove(t.group);
       this.obstacles = this.obstacles.filter(o => {
         if (o.tileZ === t.spawnZ) { this.scene.remove(o.mesh); return false; }
@@ -712,6 +718,29 @@ export class GameEngine {
       const last = this.tiles[this.tiles.length - 1];
       this.addTile(last.index + 1, last.z - TILE_LENGTH);
     }
+
+    // Torch flicker
+    const tNow = performance.now() / 1000;
+    for (const tor of this.torches) {
+      const f = 0.75 + Math.sin(tNow * 18 + tor.flame.position.x) * 0.15 + Math.random() * 0.1;
+      tor.light.intensity = tor.baseIntensity * f;
+      tor.flame.scale.y = 0.85 + f * 0.25;
+    }
+
+    // Dust drift (relative to player)
+    const dp = this.dust.geometry.attributes.position as THREE.BufferAttribute;
+    const arr = dp.array as Float32Array;
+    for (let i = 0; i < arr.length; i += 3) {
+      arr[i] += this.dustVelocities[i] * dt;
+      arr[i + 1] += this.dustVelocities[i + 1] * dt;
+      arr[i + 2] += this.speed * dt * 0.6;
+      if (arr[i + 2] > 12) {
+        arr[i] = (Math.random() - 0.5) * 9;
+        arr[i + 1] = Math.random() * 5 + 0.5;
+        arr[i + 2] = -90 - Math.random() * 20;
+      }
+    }
+    dp.needsUpdate = true;
 
     // Tilt steering
     if (this.tiltEnabled && this.tiltBaseline != null) {
