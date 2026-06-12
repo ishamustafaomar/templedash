@@ -23,9 +23,10 @@ export function StartScreen({ onPlay, tiltEnabled, onToggleTilt, onSignIn, onSig
     >
       <motion.h1
         initial={{ y: -20, opacity: 0 }} animate={{ y: 0, opacity: 1 }}
-        className="font-cinzel font-black text-6xl md:text-8xl text-primary text-glow-gold tracking-wider"
+        className="font-cinzel font-black text-6xl md:text-8xl text-primary text-glow-gold tracking-wider text-center"
       >
-        Temple Dash
+        <span className="block">Temple Dash</span>
+        <span className="sr-only"> — Ancient Endless Runner</span>
       </motion.h1>
       <p className="mt-3 text-muted-foreground text-center max-w-md">
         Ancient corridors. Endless danger. How far can you run?
@@ -43,9 +44,9 @@ export function StartScreen({ onPlay, tiltEnabled, onToggleTilt, onSignIn, onSig
       </div>
 
       <div className="mt-6 flex items-center gap-3 rounded-full bg-card/60 border border-border px-4 py-2">
-        <Smartphone className="w-4 h-4 text-muted-foreground" />
-        <span className="text-sm text-foreground">Tilt steering</span>
-        <Switch checked={tiltEnabled} onCheckedChange={onToggleTilt} />
+        <Smartphone className="w-4 h-4 text-muted-foreground" aria-hidden="true" />
+        <label htmlFor="tilt-steering" className="text-sm text-foreground cursor-pointer">Tilt steering</label>
+        <Switch id="tilt-steering" aria-label="Toggle tilt steering" checked={tiltEnabled} onCheckedChange={onToggleTilt} />
       </div>
 
       <div className="mt-8 flex flex-col gap-3 w-full max-w-xs">
@@ -72,12 +73,12 @@ export function StartScreen({ onPlay, tiltEnabled, onToggleTilt, onSignIn, onSig
       </div>
 
       {isGuest && (
-        <p className="mt-3 text-xs text-muted-foreground/70 text-center max-w-xs">
+        <p className="mt-3 text-xs text-muted-foreground text-center max-w-xs">
           Playing as guest — progress saves on this device.
         </p>
       )}
 
-      <p className="mt-6 text-sm text-muted-foreground/70 text-center flex items-center justify-center gap-4">
+      <p className="mt-6 text-sm text-muted-foreground text-center flex items-center justify-center gap-4">
         <Link to="/privacy" className="hover:text-foreground inline-flex items-center min-h-11 px-3">Privacy</Link>
         <Link to="/terms" className="hover:text-foreground inline-flex items-center min-h-11 px-3">Terms</Link>
       </p>

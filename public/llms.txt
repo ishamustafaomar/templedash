@@ -1,0 +1,10 @@
+# Temple Dash
+
+> Temple Dash is a free 3D endless runner set in an ancient temple. Switch lanes, jump, slide, dodge obstacles, and collect coins to upgrade permanent power-ups.
+
+## Pages
+
+- [Play Temple Dash](/): The main game — start a run, pick a character, beat your high score.
+- [Temple Shop](/shop): Spend earned coins on permanent upgrades (magnet, speed, invincibility, shield, coin multiplier, head start) or buy coin packs.
+- [Privacy Policy](/privacy): What data Temple Dash collects and how it's used.
+- [Terms of Service](/terms): Rules for using Temple Dash and purchasing in-game items.

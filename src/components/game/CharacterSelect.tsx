@@ -17,8 +17,8 @@ export function CharacterSelect({ onConfirm, onBack }: Props) {
       <h2 className="font-cinzel font-bold text-3xl md:text-4xl text-foreground mb-8">Choose Your Runner</h2>
 
       <div className="relative flex items-center gap-6">
-        <Button variant="ghost" size="icon" onClick={() => setIdx((idx - 1 + CHARACTERS.length) % CHARACTERS.length)}>
-          <ChevronLeft className="w-8 h-8" />
+        <Button variant="ghost" size="icon" aria-label="Previous character" onClick={() => setIdx((idx - 1 + CHARACTERS.length) % CHARACTERS.length)}>
+          <ChevronLeft className="w-8 h-8" aria-hidden="true" />
         </Button>
 
         <AnimatePresence mode="wait">
@@ -40,8 +40,8 @@ export function CharacterSelect({ onConfirm, onBack }: Props) {
           </motion.div>
         </AnimatePresence>
 
-        <Button variant="ghost" size="icon" onClick={() => setIdx((idx + 1) % CHARACTERS.length)}>
-          <ChevronRight className="w-8 h-8" />
+        <Button variant="ghost" size="icon" aria-label="Next character" onClick={() => setIdx((idx + 1) % CHARACTERS.length)}>
+          <ChevronRight className="w-8 h-8" aria-hidden="true" />
         </Button>
       </div>
 

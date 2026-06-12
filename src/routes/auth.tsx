@@ -9,7 +9,15 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
 export const Route = createFileRoute("/auth")({
   ssr: false,
-  head: () => ({ meta: [{ title: "Sign in — Temple Dash" }] }),
+  head: () => ({
+    meta: [
+      { title: "Sign in — Temple Dash" },
+      { name: "description", content: "Sign in to Temple Dash to sync your high score, coins, and upgrades across devices." },
+      { property: "og:title", content: "Sign in — Temple Dash" },
+      { property: "og:description", content: "Sign in to Temple Dash to sync your progress and purchases across devices." },
+      { property: "og:url", content: "https://templedash.fun/auth" },
+    ],
+  }),
   component: AuthPage,
 });
 
@@ -63,7 +71,7 @@ function AuthPage() {
         <Link to="/" className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground">
           <ArrowLeft className="w-3 h-3" /> Back to game
         </Link>
-        <h1 className="font-cinzel font-black text-4xl text-center text-primary text-glow-gold mt-2">Temple Dash</h1>
+        <h1 className="font-cinzel font-black text-4xl text-center text-primary text-glow-gold mt-2">Sign In or Sign Up</h1>
         <p className="text-center text-muted-foreground text-sm mt-1">
           Sign in to back up your progress to the cloud
         </p>
