@@ -16,7 +16,9 @@ export const Route = createFileRoute("/shop")({
   head: () => ({
     meta: [
       { title: "Temple Shop — Upgrades & Coin Packs" },
-      { name: "description", content: "Buy coin packs or spend coins on permanent power-up upgrades." },
+      { name: "description", content: "Buy Temple Dash coin packs or spend coins on permanent power-up upgrades like magnet, speed, shield, and invincibility." },
+      { property: "og:title", content: "Temple Shop — Upgrades & Coin Packs" },
+      { property: "og:description", content: "Buy coin packs or spend coins on permanent power-up upgrades in Temple Dash." },
       { property: "og:url", content: "https://templedash.fun/shop" },
     ],
     links: [{ rel: "canonical", href: "https://templedash.fun/shop" }],

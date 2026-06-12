@@ -21,7 +21,15 @@ import { deleteMyAccount } from "@/lib/account.functions";
 
 export const Route = createFileRoute("/settings")({
   ssr: false,
-  head: () => ({ meta: [{ title: "Settings — Temple Dash" }] }),
+  head: () => ({
+    meta: [
+      { title: "Settings — Temple Dash" },
+      { name: "description", content: "Manage your Temple Dash account, sign out, or permanently delete your cloud-save data." },
+      { property: "og:title", content: "Settings — Temple Dash" },
+      { property: "og:description", content: "Manage your Temple Dash account or delete your cloud-save data." },
+      { property: "og:url", content: "https://templedash.fun/settings" },
+    ],
+  }),
   component: SettingsPage,
 });
 
