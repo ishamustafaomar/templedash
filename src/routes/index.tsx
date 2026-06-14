@@ -18,6 +18,8 @@ import { useProfile } from "@/lib/useProfile";
 import { supabase } from "@/integrations/supabase/client";
 import { useGameStore } from "@/components/game/engine/store";
 import { useGameInput } from "@/components/game/engine/input";
+import { useTiltInput, requestTiltPermission } from "@/components/game/engine/tilt";
+
 import type { PowerupType, FinalStats } from "@/components/game/engine/types";
 
 type GameState = "start" | "charselect" | "playing" | "over";
@@ -49,6 +51,10 @@ function GamePage() {
   const [isNewHighScore, setIsNewHighScore] = useState(false);
   const [flashPowerup, setFlashPowerup] = useState<PowerupType | null>(null);
   const [isTripping, setIsTripping] = useState(false);
+  const [tiltEnabled, setTiltEnabled] = useState<boolean>(() => {
+    if (typeof window === "undefined") return false;
+    return window.localStorage.getItem("td:tilt") === "1";
+  });
 
   // Subscribe to live HUD values
   const hudScore = useGameStore((s) => s.score);
@@ -58,6 +64,20 @@ function GamePage() {
   const timers = useGameStore((s) => s.timers);
 
   useGameInput(gameState === "playing");
+  useTiltInput(gameState === "playing" && tiltEnabled);
+
+  const handleToggleTilt = useCallback(async () => {
+    if (!tiltEnabled) {
+      const ok = await requestTiltPermission();
+      if (!ok) return;
+      setTiltEnabled(true);
+      window.localStorage.setItem("td:tilt", "1");
+    } else {
+      setTiltEnabled(false);
+      window.localStorage.setItem("td:tilt", "0");
+    }
+  }, [tiltEnabled]);
+
 
   const startGame = useCallback((charId: string) => {
     if (!profile) return;
@@ -123,8 +143,9 @@ function GamePage() {
           <StartScreen
             key="start"
             highScore={profile?.high_score ?? 0}
-            tiltEnabled={false}
-            onToggleTilt={() => {}}
+            tiltEnabled={tiltEnabled}
+            onToggleTilt={handleToggleTilt}
+
             isGuest={isGuest}
             onSignIn={() => navigate({ to: "/auth" })}
             onSignOut={handleSignOut}
