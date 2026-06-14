@@ -52,7 +52,6 @@ function PrivacyPage() {
             <h2 className="text-lg font-semibold">How we use it</h2>
             <ul className="list-disc pl-5 space-y-1">
               <li>Sync your progress across devices when you sign in.</li>
-              <li>Credit purchased coins to your account.</li>
               <li>Diagnose and fix crashes.</li>
               <li>Comply with tax, accounting, and fraud-prevention requirements.</li>
             </ul>
