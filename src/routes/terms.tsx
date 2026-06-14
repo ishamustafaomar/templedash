@@ -80,10 +80,6 @@ function TermsPage() {
             </p>
           </section>
 
-          <section>
-            <h2 className="text-lg font-semibold">Contact</h2>
-            <p>Email <a href="mailto:support@example.com" className="text-primary underline">support@example.com</a>.</p>
-          </section>
 
           <p className="text-xs text-muted-foreground pt-6 border-t border-border">
             See also our <Link to="/privacy" className="text-primary underline">Privacy Policy</Link>.
