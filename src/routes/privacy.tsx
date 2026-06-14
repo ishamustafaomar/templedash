@@ -31,7 +31,7 @@ function PrivacyPage() {
             <h2 className="text-lg font-semibold">Summary</h2>
             <p>
               Temple Dash is a single-player game. We collect the minimum data needed to save your
-              progress to the cloud and to process purchases. We don't sell your data and we don't
+              progress to the cloud. We don't sell your data and we don't
               run third-party advertising or behavioral tracking.
             </p>
           </section>
