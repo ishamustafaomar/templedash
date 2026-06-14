@@ -61,7 +61,6 @@ function PrivacyPage() {
             <h2 className="text-lg font-semibold">Third-party processors</h2>
             <ul className="list-disc pl-5 space-y-1">
               <li><strong>Supabase</strong> — authentication and database hosting.</li>
-              <li><strong>Stripe</strong> — payment processing for coin purchases.</li>
             </ul>
           </section>
 
