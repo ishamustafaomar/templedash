@@ -143,8 +143,9 @@ function GamePage() {
           <StartScreen
             key="start"
             highScore={profile?.high_score ?? 0}
-            tiltEnabled={false}
-            onToggleTilt={() => {}}
+            tiltEnabled={tiltEnabled}
+            onToggleTilt={handleToggleTilt}
+
             isGuest={isGuest}
             onSignIn={() => navigate({ to: "/auth" })}
             onSignOut={handleSignOut}
