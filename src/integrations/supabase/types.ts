@@ -14,42 +14,6 @@ export type Database = {
   }
   public: {
     Tables: {
-      coin_purchases: {
-        Row: {
-          amount_cents: number
-          coins_granted: number
-          created_at: string
-          currency: string
-          environment: string
-          id: string
-          price_id: string
-          stripe_session_id: string
-          user_id: string
-        }
-        Insert: {
-          amount_cents: number
-          coins_granted: number
-          created_at?: string
-          currency?: string
-          environment?: string
-          id?: string
-          price_id: string
-          stripe_session_id: string
-          user_id: string
-        }
-        Update: {
-          amount_cents?: number
-          coins_granted?: number
-          created_at?: string
-          currency?: string
-          environment?: string
-          id?: string
-          price_id?: string
-          stripe_session_id?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
       profiles: {
         Row: {
           coin_multiplier: boolean
