@@ -76,11 +76,7 @@ function PrivacyPage() {
             <p>
               You can delete your account at any time from{" "}
               <Link to="/settings" className="text-primary underline">Settings</Link>. Deletion removes
-              your profile, progress, and purchase history from our systems. Payment records retained
-              by Stripe for legal/tax reasons are governed by their privacy policy.
-            </p>
-            <p>
-              To request a copy of your data or ask any privacy question, contact us at the address below.
+              your profile, progress, and purchase history from our systems.
             </p>
           </section>
 
@@ -89,10 +85,6 @@ function PrivacyPage() {
             <p>Temple Dash is not directed at children under 13 and we do not knowingly collect their data.</p>
           </section>
 
-          <section>
-            <h2 className="text-lg font-semibold">Contact</h2>
-            <p>Questions? Email <a href="mailto:support@example.com" className="text-primary underline">support@example.com</a>.</p>
-          </section>
 
           <p className="text-xs text-muted-foreground pt-6 border-t border-border">
             See also our <Link to="/terms" className="text-primary underline">Terms of Service</Link>.
