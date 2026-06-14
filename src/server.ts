@@ -49,7 +49,7 @@ function applySecurityHeaders(response: Response): Response {
   if (!headers.has("x-content-type-options")) headers.set("X-Content-Type-Options", "nosniff");
   if (!headers.has("referrer-policy")) headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
   if (!headers.has("permissions-policy")) {
-    headers.set("Permissions-Policy", "geolocation=(), microphone=(), camera=(), payment=(self \"https://js.stripe.com\")");
+    headers.set("Permissions-Policy", "geolocation=(), microphone=(), camera=(), payment=()");
   }
   if (!headers.has("strict-transport-security")) {
     headers.set("Strict-Transport-Security", "max-age=31536000; includeSubDomains");
