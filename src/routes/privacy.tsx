@@ -42,11 +42,6 @@ function PrivacyPage() {
               <li><strong>Account:</strong> email address and a unique user ID when you sign up.</li>
               <li><strong>Game progress:</strong> high score, total coins, upgrade levels, and unlocked perks.</li>
               <li>
-                <strong>Purchases:</strong> a record of each coin-pack purchase (timestamp, item, amount, currency,
-                and the payment processor's session ID). Card numbers are processed by our payment
-                provider and never touch our servers.
-              </li>
-              <li>
                 <strong>Crash diagnostics:</strong> if the app errors, we log the error message and
                 stack trace to fix the bug. No personal content is included.
               </li>
