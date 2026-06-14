@@ -18,6 +18,8 @@ import { useProfile } from "@/lib/useProfile";
 import { supabase } from "@/integrations/supabase/client";
 import { useGameStore } from "@/components/game/engine/store";
 import { useGameInput } from "@/components/game/engine/input";
+import { useTiltInput, requestTiltPermission } from "@/components/game/engine/tilt";
+
 import type { PowerupType, FinalStats } from "@/components/game/engine/types";
 
 type GameState = "start" | "charselect" | "playing" | "over";
