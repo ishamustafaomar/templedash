@@ -1,0 +1,1 @@
+drop table if exists public.coin_purchases cascade;
