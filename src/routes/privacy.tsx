@@ -69,7 +69,7 @@ function PrivacyPage() {
             <p>
               You can delete your account at any time from{" "}
               <Link to="/settings" className="text-primary underline">Settings</Link>. Deletion removes
-              your profile, progress, and purchase history from our systems.
+              your profile and progress from our systems.
             </p>
           </section>
 
