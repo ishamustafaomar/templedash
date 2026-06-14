@@ -87,6 +87,21 @@ function AuthPage() {
             <Button onClick={() => submit("signin")} disabled={loading} className="w-full font-cinzel">
               {loading ? "Signing in..." : "Sign In"}
             </Button>
+            <button
+              type="button"
+              onClick={async () => {
+                setErr(null); setInfo(null);
+                if (!email) { setErr("Enter your email above first."); return; }
+                const { error } = await supabase.auth.resetPasswordForEmail(email, {
+                  redirectTo: `${window.location.origin}/reset-password`,
+                });
+                if (error) setErr(error.message);
+                else setInfo("Password reset email sent. Check your inbox.");
+              }}
+              className="block w-full text-center text-xs text-primary hover:underline"
+            >
+              Forgot password?
+            </button>
           </TabsContent>
           <TabsContent value="signup" className="space-y-3 mt-4">
             <Field id="e2" label="Email" value={email} onChange={setEmail} type="email" />
