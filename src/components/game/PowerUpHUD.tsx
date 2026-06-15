@@ -1,4 +1,6 @@
 import { Shield, Magnet, Zap, Sparkles } from "lucide-react";
+import { useShallow } from "zustand/react/shallow";
+import { useGameStore } from "./engine/store";
 import type { PowerupType } from "./engine/types";
 
 const ICONS: Record<PowerupType, React.ReactNode> = {
@@ -12,12 +14,11 @@ const COLORS: Record<PowerupType, string> = {
 };
 const DUR: Record<PowerupType, number> = { shield: 99, magnet: 6, speed: 3, invincibility: 4 };
 
-interface Props {
-  active: Record<PowerupType, boolean>;
-  timers: Record<PowerupType, number>;
-}
-
-export function PowerUpHUD({ active, timers }: Props) {
+export function PowerUpHUD() {
+  // Subscribe with shallow eq so this only re-renders when an active flag flips.
+  // Timers update in store only when they cross to zero, so this stays cheap.
+  const active = useGameStore(useShallow((s) => s.active));
+  const timers = useGameStore(useShallow((s) => s.timers));
   const list = (Object.keys(active) as PowerupType[]).filter(k => active[k]);
   if (!list.length) return null;
   return (
