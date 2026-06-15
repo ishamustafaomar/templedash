@@ -13,9 +13,10 @@ export function GameOver({ score, distance, coins, highScore, isNewHighScore, on
   return (
     <motion.div
       initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-      className="absolute inset-0 z-30 flex flex-col items-center justify-center bg-black/75 backdrop-blur-md px-6"
+      className="absolute inset-0 z-30 overflow-y-auto overscroll-contain bg-black/75 backdrop-blur-md"
     >
-      <h2 className="font-cinzel font-black text-5xl md:text-6xl text-destructive text-glow-red">Game Over</h2>
+      <div className="min-h-full flex flex-col items-center justify-center px-6 py-8">
+      <h2 className="font-cinzel font-black text-4xl md:text-6xl text-destructive text-glow-red">Game Over</h2>
 
       {isNewHighScore && (
         <motion.div
