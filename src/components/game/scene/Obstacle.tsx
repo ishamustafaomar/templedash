@@ -1,4 +1,4 @@
-import { useRef, useMemo } from "react";
+import { memo, useRef, useMemo } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import type { ObstacleEntity } from "../engine/types";
@@ -6,7 +6,8 @@ import { LANE_X } from "../engine/constants";
 
 interface Props { ob: ObstacleEntity; }
 
-export function Obstacle({ ob }: Props) {
+function ObstacleImpl({ ob }: Props) {
+
   const ref = useRef<THREE.Group>(null!);
   const sawBlade = useRef<THREE.Group>(null!);
   const x = LANE_X[ob.lane];
