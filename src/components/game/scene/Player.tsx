@@ -16,12 +16,12 @@ export function Player({ character }: Props) {
   const armR = useRef<THREE.Group>(null!);
   const scarf = useRef<THREE.Mesh>(null!);
 
-  const bodyMat = useMemo(() => new THREE.MeshLambertMaterial({ color: character.bodyColor, roughness: 0.55, metalness: 0.05 }), [character.bodyColor]);
-  const gearMat = useMemo(() => new THREE.MeshLambertMaterial({ color: character.gearColor, roughness: 0.5, metalness: 0.15 }), [character.gearColor]);
-  const accentMat = useMemo(() => new THREE.MeshLambertMaterial({ color: character.accentColor, roughness: 0.35, metalness: 0.2, emissive: character.accentColor, emissiveIntensity: 0.15 }), [character.accentColor]);
-  const skinMat = useMemo(() => new THREE.MeshLambertMaterial({ color: 0xe7b48a, roughness: 0.8 }), []);
-  const bootMat = useMemo(() => new THREE.MeshLambertMaterial({ color: 0x2a1a10, roughness: 0.7 }), []);
-  const eyeMat = useMemo(() => new THREE.MeshLambertMaterial({ color: 0x0a0a0a, roughness: 0.3 }), []);
+  const bodyMat = useMemo(() => new THREE.MeshLambertMaterial({ color: character.bodyColor }), [character.bodyColor]);
+  const gearMat = useMemo(() => new THREE.MeshLambertMaterial({ color: character.gearColor }), [character.gearColor]);
+  const accentMat = useMemo(() => new THREE.MeshLambertMaterial({ color: character.accentColor, emissive: character.accentColor, emissiveIntensity: 0.15 }), [character.accentColor]);
+  const skinMat = useMemo(() => new THREE.MeshLambertMaterial({ color: 0xe7b48a }), []);
+  const bootMat = useMemo(() => new THREE.MeshLambertMaterial({ color: 0x2a1a10 }), []);
+  const eyeMat = useMemo(() => new THREE.MeshLambertMaterial({ color: 0x0a0a0a }), []);
 
   useFrame((_, dt) => {
     const s = useGameStore.getState();
