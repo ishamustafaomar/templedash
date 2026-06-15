@@ -84,6 +84,7 @@ export function StartScreen({ onPlay, tiltEnabled, onToggleTilt, onSignIn, onSig
         <Link to="/privacy" className="hover:text-foreground inline-flex items-center min-h-11 px-3">Privacy</Link>
         <Link to="/terms" className="hover:text-foreground inline-flex items-center min-h-11 px-3">Terms</Link>
       </p>
+      </div>
     </motion.div>
   );
 }
