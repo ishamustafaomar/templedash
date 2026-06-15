@@ -16,12 +16,12 @@ export function Player({ character }: Props) {
   const armR = useRef<THREE.Group>(null!);
   const scarf = useRef<THREE.Mesh>(null!);
 
-  const bodyMat = useMemo(() => new THREE.MeshStandardMaterial({ color: character.bodyColor, roughness: 0.55, metalness: 0.05 }), [character.bodyColor]);
-  const gearMat = useMemo(() => new THREE.MeshStandardMaterial({ color: character.gearColor, roughness: 0.5, metalness: 0.15 }), [character.gearColor]);
-  const accentMat = useMemo(() => new THREE.MeshStandardMaterial({ color: character.accentColor, roughness: 0.35, metalness: 0.2, emissive: character.accentColor, emissiveIntensity: 0.15 }), [character.accentColor]);
-  const skinMat = useMemo(() => new THREE.MeshStandardMaterial({ color: 0xe7b48a, roughness: 0.8 }), []);
-  const bootMat = useMemo(() => new THREE.MeshStandardMaterial({ color: 0x2a1a10, roughness: 0.7 }), []);
-  const eyeMat = useMemo(() => new THREE.MeshStandardMaterial({ color: 0x0a0a0a, roughness: 0.3 }), []);
+  const bodyMat = useMemo(() => new THREE.MeshLambertMaterial({ color: character.bodyColor, roughness: 0.55, metalness: 0.05 }), [character.bodyColor]);
+  const gearMat = useMemo(() => new THREE.MeshLambertMaterial({ color: character.gearColor, roughness: 0.5, metalness: 0.15 }), [character.gearColor]);
+  const accentMat = useMemo(() => new THREE.MeshLambertMaterial({ color: character.accentColor, roughness: 0.35, metalness: 0.2, emissive: character.accentColor, emissiveIntensity: 0.15 }), [character.accentColor]);
+  const skinMat = useMemo(() => new THREE.MeshLambertMaterial({ color: 0xe7b48a, roughness: 0.8 }), []);
+  const bootMat = useMemo(() => new THREE.MeshLambertMaterial({ color: 0x2a1a10, roughness: 0.7 }), []);
+  const eyeMat = useMemo(() => new THREE.MeshLambertMaterial({ color: 0x0a0a0a, roughness: 0.3 }), []);
 
   useFrame((_, dt) => {
     const s = useGameStore.getState();
@@ -79,7 +79,7 @@ export function Player({ character }: Props) {
     <group ref={group} position={[0, 0, 0]}>
       <group ref={bodyRef}>
         {/* Torso — tapered */}
-        <mesh position={[0, 1.05, 0]} castShadow material={bodyMat}>
+        <mesh position={[0, 1.05, 0]} material={bodyMat}>
           <capsuleGeometry args={[0.36, 0.7, 6, 12]} />
         </mesh>
         {/* Chest strap */}
@@ -95,7 +95,7 @@ export function Player({ character }: Props) {
         </mesh>
 
         {/* Scarf */}
-        <mesh ref={scarf} position={[0, 1.45, -0.05]} material={accentMat} castShadow>
+        <mesh ref={scarf} position={[0, 1.45, -0.05]} material={accentMat}>
           <boxGeometry args={[0.55, 0.18, 0.18]} />
         </mesh>
         <mesh position={[0.1, 1.2, -0.18]} material={accentMat}>
@@ -107,7 +107,7 @@ export function Player({ character }: Props) {
           <cylinderGeometry args={[0.13, 0.15, 0.18, 12]} />
         </mesh>
         {/* Head */}
-        <mesh position={[0, 1.85, 0]} castShadow material={skinMat}>
+        <mesh position={[0, 1.85, 0]} material={skinMat}>
           <sphereGeometry args={[0.32, 18, 16]} />
         </mesh>
         {/* Eyes */}
@@ -123,10 +123,10 @@ export function Player({ character }: Props) {
         </mesh>
 
         {/* Explorer hat — brim + crown */}
-        <mesh position={[0, 2.15, 0]} castShadow material={gearMat}>
+        <mesh position={[0, 2.15, 0]} material={gearMat}>
           <cylinderGeometry args={[0.55, 0.55, 0.05, 20]} />
         </mesh>
-        <mesh position={[0, 2.28, 0]} castShadow material={gearMat}>
+        <mesh position={[0, 2.28, 0]} material={gearMat}>
           <cylinderGeometry args={[0.3, 0.34, 0.26, 20]} />
         </mesh>
         <mesh position={[0, 2.18, 0]} material={accentMat}>
@@ -135,7 +135,7 @@ export function Player({ character }: Props) {
 
         {/* Arms — shoulder group rotates */}
         <group ref={armL} position={[-0.42, 1.45, 0]}>
-          <mesh position={[0, -0.4, 0]} castShadow material={bodyMat}>
+          <mesh position={[0, -0.4, 0]} material={bodyMat}>
             <capsuleGeometry args={[0.11, 0.55, 6, 10]} />
           </mesh>
           <mesh position={[0, -0.8, 0]} material={skinMat}>
@@ -143,7 +143,7 @@ export function Player({ character }: Props) {
           </mesh>
         </group>
         <group ref={armR} position={[0.42, 1.45, 0]}>
-          <mesh position={[0, -0.4, 0]} castShadow material={bodyMat}>
+          <mesh position={[0, -0.4, 0]} material={bodyMat}>
             <capsuleGeometry args={[0.11, 0.55, 6, 10]} />
           </mesh>
           <mesh position={[0, -0.8, 0]} material={skinMat}>
@@ -153,18 +153,18 @@ export function Player({ character }: Props) {
 
         {/* Legs */}
         <group ref={legL} position={[-0.18, 0.55, 0]}>
-          <mesh position={[0, -0.32, 0]} castShadow material={gearMat}>
+          <mesh position={[0, -0.32, 0]} material={gearMat}>
             <capsuleGeometry args={[0.14, 0.55, 6, 10]} />
           </mesh>
-          <mesh position={[0, -0.72, 0.06]} castShadow material={bootMat}>
+          <mesh position={[0, -0.72, 0.06]} material={bootMat}>
             <boxGeometry args={[0.26, 0.16, 0.36]} />
           </mesh>
         </group>
         <group ref={legR} position={[0.18, 0.55, 0]}>
-          <mesh position={[0, -0.32, 0]} castShadow material={gearMat}>
+          <mesh position={[0, -0.32, 0]} material={gearMat}>
             <capsuleGeometry args={[0.14, 0.55, 6, 10]} />
           </mesh>
-          <mesh position={[0, -0.72, 0.06]} castShadow material={bootMat}>
+          <mesh position={[0, -0.72, 0.06]} material={bootMat}>
             <boxGeometry args={[0.26, 0.16, 0.36]} />
           </mesh>
         </group>
