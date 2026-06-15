@@ -3,18 +3,36 @@ import { motion } from "framer-motion";
 export function TripOverlay() {
   return (
     <motion.div
-      initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.15 }}
       className="pointer-events-none absolute inset-0 z-20"
-      style={{ background: "radial-gradient(ellipse at center, transparent 30%, rgba(180,0,0,0.55) 100%)" }}
     >
+      {/* radial vignette */}
+      <div
+        className="absolute inset-0"
+        style={{
+          background:
+            "radial-gradient(ellipse at center, transparent 35%, rgba(120,10,10,0.6) 100%)",
+        }}
+      />
+      {/* impact flash */}
       <motion.div
-        animate={{ x: [-20, 0, -20] }} transition={{ repeat: Infinity, duration: 0.6 }}
-        className="absolute left-4 top-1/2 -translate-y-1/2 text-6xl"
-      >🦍</motion.div>
+        className="absolute inset-0 bg-red-500/30"
+        initial={{ opacity: 0.9 }}
+        animate={{ opacity: 0 }}
+        transition={{ duration: 0.35 }}
+      />
+      {/* camera shake lines */}
       <motion.div
-        animate={{ x: [20, 0, 20] }} transition={{ repeat: Infinity, duration: 0.6 }}
-        className="absolute right-4 top-1/2 -translate-y-1/2 text-6xl"
-      >🦍</motion.div>
+        className="absolute inset-0"
+        animate={{ x: [0, -6, 5, -3, 0], y: [0, 3, -4, 2, 0] }}
+        transition={{ duration: 0.4, repeat: 0 }}
+        style={{
+          boxShadow: "inset 0 0 120px 20px rgba(255,60,60,0.35)",
+        }}
+      />
     </motion.div>
   );
 }
