@@ -127,8 +127,9 @@ function GamePage() {
 
       {gameState === "playing" && (
         <>
-          <GameHUD score={Math.floor(hudScore)} coins={hudCoins} distance={hudDist} />
-          <PowerUpHUD active={active} timers={timers} />
+          <GameHUD />
+          <PowerUpHUD />
+
           <PowerUpActivationFlash flash={flashPowerup} />
           <SwipeFlash action={null} />
           {isTripping && <TripOverlay />}
