@@ -13,9 +13,10 @@ export function GameOver({ score, distance, coins, highScore, isNewHighScore, on
   return (
     <motion.div
       initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-      className="absolute inset-0 z-30 flex flex-col items-center justify-center bg-black/75 backdrop-blur-md px-6"
+      className="absolute inset-0 z-30 overflow-y-auto overscroll-contain bg-black/75 backdrop-blur-md"
     >
-      <h2 className="font-cinzel font-black text-5xl md:text-6xl text-destructive text-glow-red">Game Over</h2>
+      <div className="min-h-full flex flex-col items-center justify-center px-6 py-8">
+      <h2 className="font-cinzel font-black text-4xl md:text-6xl text-destructive text-glow-red">Game Over</h2>
 
       {isNewHighScore && (
         <motion.div
@@ -37,6 +38,7 @@ export function GameOver({ score, distance, coins, highScore, isNewHighScore, on
         <Button size="lg" onClick={onRestart} className="font-cinzel"><RotateCcw className="mr-2" /> Play Again</Button>
         <Button variant="outline" onClick={onMenu} className="font-cinzel"><Home className="mr-2" /> Main Menu</Button>
         <Button asChild variant="ghost"><Link to="/shop"><ShoppingBag className="mr-2 w-4 h-4" />Visit Shop</Link></Button>
+      </div>
       </div>
     </motion.div>
   );

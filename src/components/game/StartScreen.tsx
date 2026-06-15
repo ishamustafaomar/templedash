@@ -19,8 +19,9 @@ export function StartScreen({ onPlay, tiltEnabled, onToggleTilt, onSignIn, onSig
   return (
     <motion.div
       initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-      className="absolute inset-0 z-30 flex flex-col items-center justify-center bg-black/70 backdrop-blur-sm px-6"
+      className="absolute inset-0 z-30 overflow-y-auto overscroll-contain bg-black/70 backdrop-blur-sm"
     >
+      <div className="min-h-full flex flex-col items-center justify-center px-6 py-8">
       <motion.h1
         initial={{ y: -20, opacity: 0 }} animate={{ y: 0, opacity: 1 }}
         className="font-cinzel font-black text-6xl md:text-8xl text-primary text-glow-gold tracking-wider text-center"
@@ -83,6 +84,7 @@ export function StartScreen({ onPlay, tiltEnabled, onToggleTilt, onSignIn, onSig
         <Link to="/privacy" className="hover:text-foreground inline-flex items-center min-h-11 px-3">Privacy</Link>
         <Link to="/terms" className="hover:text-foreground inline-flex items-center min-h-11 px-3">Terms</Link>
       </p>
+      </div>
     </motion.div>
   );
 }
