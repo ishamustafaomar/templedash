@@ -12,9 +12,10 @@ export function CharacterSelect({ onConfirm, onBack }: Props) {
   return (
     <motion.div
       initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-      className="absolute inset-0 z-30 flex flex-col items-center justify-center bg-black/75 backdrop-blur-md px-6"
+      className="absolute inset-0 z-30 overflow-y-auto overscroll-contain bg-black/75 backdrop-blur-md"
     >
-      <h2 className="font-cinzel font-bold text-3xl md:text-4xl text-foreground mb-8">Choose Your Runner</h2>
+      <div className="min-h-full flex flex-col items-center justify-center px-6 py-8">
+      <h2 className="font-cinzel font-bold text-2xl md:text-4xl text-foreground mb-6">Choose Your Runner</h2>
 
       <div className="relative flex items-center gap-6">
         <Button variant="ghost" size="icon" aria-label="Previous character" onClick={() => setIdx((idx - 1 + CHARACTERS.length) % CHARACTERS.length)}>
