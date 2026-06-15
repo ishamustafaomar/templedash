@@ -29,10 +29,12 @@ function ObstacleImpl({ ob }: Props) {
   }), []);
 
   useFrame((_, dt) => {
+    if (ref.current) ref.current.position.z = ob.z;
     if (ob.kind === "saw" && sawBlade.current) {
       sawBlade.current.rotation.z += dt * 12;
     }
   });
+
 
   if (ob.kind === "lowbar") {
     // Carved stone arch with glowing runes — slide under
