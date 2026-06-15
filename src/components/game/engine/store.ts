@@ -78,6 +78,8 @@ export const useGameStore = create<GameState>((set, get) => ({
   coins3d: [],
   powerups3d: [],
   nextSpawnZ: -40,
+  entitiesVersion: 0,
+
 
   active: { ...initialActive },
   timers: { ...initialTimers },
