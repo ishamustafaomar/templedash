@@ -30,8 +30,8 @@ export function Game(props: Props) {
   return (
     <Canvas
       camera={{ position: CAMERA_POS, fov: 60, near: 0.1, far: 200 }}
-      gl={{ antialias: false, powerPreference: "high-performance", stencil: false, depth: true }}
-      dpr={1}
+      gl={{ antialias: true, powerPreference: "high-performance", stencil: false, depth: true }}
+      dpr={[1, 2]}
       style={{ position: "absolute", inset: 0 }}
     >
       <CameraRig />
