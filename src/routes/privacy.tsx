@@ -58,11 +58,29 @@ function PrivacyPage() {
           </section>
 
           <section>
+            <h2 className="text-lg font-semibold">Device permissions</h2>
+            <ul className="list-disc pl-5 space-y-1">
+              <li>
+                <strong>Motion &amp; orientation (gyroscope):</strong> only used when you turn on
+                <em> Tilt steering</em> from the main menu, and only while a run is active. Tilt
+                readings are processed on-device to switch lanes — they are never recorded,
+                stored, or sent to our servers.
+              </li>
+              <li>
+                <strong>Local storage:</strong> we save your tilt-steering preference and a guest
+                progress backup in your browser's local storage.
+              </li>
+              <li>We do not request access to camera, microphone, contacts, location, or health data.</li>
+            </ul>
+          </section>
+
+          <section>
             <h2 className="text-lg font-semibold">Third-party processors</h2>
             <ul className="list-disc pl-5 space-y-1">
               <li><strong>Supabase</strong> — authentication and database hosting.</li>
             </ul>
           </section>
+
 
           <section>
             <h2 className="text-lg font-semibold">Your rights</h2>
