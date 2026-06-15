@@ -26,11 +26,15 @@ interface GameState {
   coins3d: CoinEntity[];
   powerups3d: PowerUpEntity[];
   nextSpawnZ: number; // most negative z already spawned
+  /** Bumped only when entity membership changes (add/remove), not on per-frame position updates.
+   *  Components that render entity lists should subscribe to this instead of the arrays themselves. */
+  entitiesVersion: number;
 
   // power-up state
   active: Record<PowerupType, boolean>;
   timers: Record<PowerupType, number>;
   shieldCount: number;
+
 
   // hud flash
   flashPowerup: PowerupType | null;
