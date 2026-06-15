@@ -39,6 +39,7 @@ export function GameOver({ score, distance, coins, highScore, isNewHighScore, on
         <Button variant="outline" onClick={onMenu} className="font-cinzel"><Home className="mr-2" /> Main Menu</Button>
         <Button asChild variant="ghost"><Link to="/shop"><ShoppingBag className="mr-2 w-4 h-4" />Visit Shop</Link></Button>
       </div>
+      </div>
     </motion.div>
   );
 }
