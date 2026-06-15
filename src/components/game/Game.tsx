@@ -29,15 +29,14 @@ interface Props {
 export function Game(props: Props) {
   return (
     <Canvas
-      shadows
       camera={{ position: CAMERA_POS, fov: 60, near: 0.1, far: 200 }}
-      gl={{ antialias: true, powerPreference: "high-performance" }}
-      dpr={[1, 1.5]}
+      gl={{ antialias: false, powerPreference: "high-performance", stencil: false, depth: true }}
+      dpr={1}
       style={{ position: "absolute", inset: 0 }}
     >
       <CameraRig />
       <Lighting />
-      <fog attach="fog" args={["#1a0e08", 20, 95]} />
+      <fog attach="fog" args={["#1a0e08", 18, 75]} />
       <color attach="background" args={["#0a0604"]} />
       <Corridor />
       <Player character={props.character} />
@@ -62,20 +61,15 @@ function CameraRig() {
 }
 
 function Lighting() {
+  // Cheap two-light rig — no point lights, no shadows.
   return (
     <>
-      <ambientLight intensity={0.25} color="#ffa060" />
-      <directionalLight
-        position={[3, 12, 5]}
-        intensity={0.6}
-        color="#ffcc88"
-        castShadow
-        shadow-mapSize={[1024, 1024]}
-      />
-      <pointLight position={[0, 3, 4]} color="#ffaa55" intensity={0.7} distance={12} />
+      <hemisphereLight args={["#ffd9a8", "#2a1408", 0.9]} />
+      <directionalLight position={[3, 12, 5]} intensity={0.9} color="#ffcc88" />
     </>
   );
 }
+
 
 function World({ coinMultiplier, powerupDurations, onCoin, onPowerup, onCrash, onGameOver, onSound }: Omit<Props, "character">) {
   const crashedRef = useRef(false);
