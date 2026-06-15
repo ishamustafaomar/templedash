@@ -96,7 +96,8 @@ export const useGameStore = create<GameState>((set, get) => ({
     lane: 1, targetLane: 1, laneChangeT: 1,
     y: 0, vy: 0, isJumping: false, isSliding: false, slideT: 0,
     obstacles: [], coins3d: [], powerups3d: [],
-    nextSpawnZ: -40,
+    nextSpawnZ: -40, entitiesVersion: 0,
+
     active: { ...initialActive }, timers: { ...initialTimers }, shieldCount: 0,
     flashPowerup: null, tripping: false,
   }),
