@@ -107,8 +107,15 @@ function GamePage() {
 
   const handleToggleTilt = useCallback(async () => {
     if (!tiltEnabled) {
-      const ok = await requestTiltPermission();
+      // Apple/iOS require a clear, user-facing rationale BEFORE requesting motion access.
+      const ok = window.confirm(
+        "Enable tilt steering?\n\n" +
+        "Temple Dash will use your device's motion sensors (gyroscope) only while you're actively playing, to let you switch lanes by tilting your phone left or right.\n\n" +
+        "We do not record, store, or share any motion data. It never leaves your device."
+      );
       if (!ok) return;
+      const granted = await requestTiltPermission();
+      if (!granted) return;
       setTiltEnabled(true);
       window.localStorage.setItem("td:tilt", "1");
     } else {
@@ -116,6 +123,7 @@ function GamePage() {
       window.localStorage.setItem("td:tilt", "0");
     }
   }, [tiltEnabled]);
+
 
 
   const startGame = useCallback((charId: string) => {
