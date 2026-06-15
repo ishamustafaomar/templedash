@@ -162,6 +162,9 @@ function ObstacleImpl({ ob }: Props) {
   );
 }
 
+export const Obstacle = memo(ObstacleImpl, (a, b) => a.ob === b.ob);
+
+
 export const OBSTACLE_AABB: Record<ObstacleEntity["kind"], { yMin: number; yMax: number; xHalf: number; zHalf: number; }> = {
   lowbar:  { yMin: 1.45, yMax: 2.00, xHalf: 1.05, zHalf: 0.25 },
   hurdle:  { yMin: 0.00, yMax: 0.95, xHalf: 0.85, zHalf: 0.30 },
