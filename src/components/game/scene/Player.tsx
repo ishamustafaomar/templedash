@@ -10,20 +10,22 @@ interface Props { character: Character; }
 export function Player({ character }: Props) {
   const group = useRef<THREE.Group>(null!);
   const bodyRef = useRef<THREE.Group>(null!);
-  const legL = useRef<THREE.Mesh>(null!);
-  const legR = useRef<THREE.Mesh>(null!);
-  const armL = useRef<THREE.Mesh>(null!);
-  const armR = useRef<THREE.Mesh>(null!);
+  const legL = useRef<THREE.Group>(null!);
+  const legR = useRef<THREE.Group>(null!);
+  const armL = useRef<THREE.Group>(null!);
+  const armR = useRef<THREE.Group>(null!);
+  const scarf = useRef<THREE.Mesh>(null!);
 
-  const bodyMat = useMemo(() => new THREE.MeshStandardMaterial({ color: character.bodyColor, roughness: 0.7 }), [character.bodyColor]);
-  const gearMat = useMemo(() => new THREE.MeshStandardMaterial({ color: character.gearColor, roughness: 0.6 }), [character.gearColor]);
-  const accentMat = useMemo(() => new THREE.MeshStandardMaterial({ color: character.accentColor, roughness: 0.5 }), [character.accentColor]);
-  const skinMat = useMemo(() => new THREE.MeshStandardMaterial({ color: 0xf2c7a0, roughness: 0.8 }), []);
+  const bodyMat = useMemo(() => new THREE.MeshStandardMaterial({ color: character.bodyColor, roughness: 0.55, metalness: 0.05 }), [character.bodyColor]);
+  const gearMat = useMemo(() => new THREE.MeshStandardMaterial({ color: character.gearColor, roughness: 0.5, metalness: 0.15 }), [character.gearColor]);
+  const accentMat = useMemo(() => new THREE.MeshStandardMaterial({ color: character.accentColor, roughness: 0.35, metalness: 0.2, emissive: character.accentColor, emissiveIntensity: 0.15 }), [character.accentColor]);
+  const skinMat = useMemo(() => new THREE.MeshStandardMaterial({ color: 0xe7b48a, roughness: 0.8 }), []);
+  const bootMat = useMemo(() => new THREE.MeshStandardMaterial({ color: 0x2a1a10, roughness: 0.7 }), []);
+  const eyeMat = useMemo(() => new THREE.MeshStandardMaterial({ color: 0x0a0a0a, roughness: 0.3 }), []);
 
   useFrame((_, dt) => {
     const s = useGameStore.getState();
 
-    // physics — vertical
     if (s.isJumping) {
       const vy = s.vy - GRAVITY * dt;
       let y = s.y + vy * dt;
@@ -34,13 +36,11 @@ export function Player({ character }: Props) {
         useGameStore.setState({ y, vy });
       }
     }
-    // slide timer
     if (s.isSliding) {
       const t = s.slideT - dt;
       if (t <= 0) useGameStore.setState({ isSliding: false, slideT: 0 });
       else useGameStore.setState({ slideT: t });
     }
-    // lane change interpolation
     if (s.laneChangeT < 1) {
       const t = Math.min(1, s.laneChangeT + dt / LANE_CHANGE_DURATION);
       useGameStore.setState({ laneChangeT: t });
@@ -54,62 +54,120 @@ export function Player({ character }: Props) {
     group.current.position.x = x;
     group.current.position.y = live.y;
 
-    // squash when sliding
     const slideScale = live.isSliding ? PLAYER_SLIDE_HEIGHT / PLAYER_HEIGHT : 1;
     bodyRef.current.scale.y = THREE.MathUtils.lerp(bodyRef.current.scale.y, slideScale, 0.3);
     bodyRef.current.position.y = THREE.MathUtils.lerp(bodyRef.current.position.y, live.isSliding ? -0.4 : 0, 0.3);
 
-    // run cycle
-    const t = performance.now() * 0.012 * (live.isJumping || live.isSliding ? 0 : 1);
-    const swing = Math.sin(t) * 0.7;
+    const t = performance.now() * 0.014 * (live.isJumping || live.isSliding ? 0 : 1);
+    const swing = Math.sin(t) * 0.85;
     if (legL.current) legL.current.rotation.x = swing;
     if (legR.current) legR.current.rotation.x = -swing;
-    if (armL.current) armL.current.rotation.x = -swing * 0.8;
-    if (armR.current) armR.current.rotation.x = swing * 0.8;
+    if (armL.current) armL.current.rotation.x = -swing * 0.9;
+    if (armR.current) armR.current.rotation.x = swing * 0.9;
+    // subtle torso bob
+    bodyRef.current.position.y += Math.abs(Math.sin(t)) * 0.04 * (live.isSliding ? 0 : 1);
+    // scarf flutter
+    if (scarf.current) {
+      scarf.current.rotation.x = 0.3 + Math.sin(performance.now() * 0.01) * 0.15;
+    }
 
-    // banking on lane change
-    const bank = (toX - fromX) * (1 - live.laneChangeT) * 0.06;
+    const bank = (toX - fromX) * (1 - live.laneChangeT) * 0.07;
     group.current.rotation.z = THREE.MathUtils.lerp(group.current.rotation.z, -bank, 0.2);
   });
 
   return (
     <group ref={group} position={[0, 0, 0]}>
       <group ref={bodyRef}>
-        {/* Torso */}
-        <mesh position={[0, 1.0, 0]} castShadow material={bodyMat}>
-          <boxGeometry args={[0.9, 1.1, 0.55]} />
+        {/* Torso — tapered */}
+        <mesh position={[0, 1.05, 0]} castShadow material={bodyMat}>
+          <capsuleGeometry args={[0.36, 0.7, 6, 12]} />
+        </mesh>
+        {/* Chest strap */}
+        <mesh position={[0, 1.15, 0.28]} material={accentMat}>
+          <boxGeometry args={[0.7, 0.12, 0.08]} />
+        </mesh>
+        {/* Belt */}
+        <mesh position={[0, 0.62, 0]} material={gearMat}>
+          <cylinderGeometry args={[0.4, 0.4, 0.14, 16]} />
+        </mesh>
+        <mesh position={[0, 0.62, 0.36]} material={accentMat}>
+          <boxGeometry args={[0.18, 0.18, 0.06]} />
+        </mesh>
+
+        {/* Scarf */}
+        <mesh ref={scarf} position={[0, 1.45, -0.05]} material={accentMat} castShadow>
+          <boxGeometry args={[0.55, 0.18, 0.18]} />
+        </mesh>
+        <mesh position={[0.1, 1.2, -0.18]} material={accentMat}>
+          <boxGeometry args={[0.22, 0.55, 0.06]} />
+        </mesh>
+
+        {/* Neck */}
+        <mesh position={[0, 1.55, 0]} material={skinMat}>
+          <cylinderGeometry args={[0.13, 0.15, 0.18, 12]} />
         </mesh>
         {/* Head */}
         <mesh position={[0, 1.85, 0]} castShadow material={skinMat}>
-          <boxGeometry args={[0.55, 0.55, 0.55]} />
+          <sphereGeometry args={[0.32, 18, 16]} />
         </mesh>
         {/* Eyes */}
-        <mesh position={[-0.13, 1.88, 0.28]}><boxGeometry args={[0.08, 0.08, 0.02]} /><meshStandardMaterial color="#101010" /></mesh>
-        <mesh position={[0.13, 1.88, 0.28]}><boxGeometry args={[0.08, 0.08, 0.02]} /><meshStandardMaterial color="#101010" /></mesh>
-        {/* Hat */}
-        <mesh position={[0, 2.22, 0]} castShadow material={gearMat}>
-          <cylinderGeometry args={[0.55, 0.55, 0.05, 16]} />
+        <mesh position={[-0.11, 1.9, 0.27]} material={eyeMat}>
+          <sphereGeometry args={[0.045, 10, 10]} />
         </mesh>
-        <mesh position={[0, 2.32, 0]} castShadow material={gearMat}>
-          <cylinderGeometry args={[0.32, 0.32, 0.22, 16]} />
+        <mesh position={[0.11, 1.9, 0.27]} material={eyeMat}>
+          <sphereGeometry args={[0.045, 10, 10]} />
         </mesh>
-        <mesh position={[0, 2.32, 0]} material={accentMat}>
-          <torusGeometry args={[0.33, 0.04, 8, 24]} />
+        {/* Brow */}
+        <mesh position={[0, 2.0, 0.27]} material={gearMat}>
+          <boxGeometry args={[0.34, 0.04, 0.04]} />
         </mesh>
-        {/* Arms */}
-        <mesh ref={armL} position={[-0.55, 1.35, 0]} castShadow material={bodyMat}>
-          <boxGeometry args={[0.22, 0.9, 0.22]} />
+
+        {/* Explorer hat — brim + crown */}
+        <mesh position={[0, 2.15, 0]} castShadow material={gearMat}>
+          <cylinderGeometry args={[0.55, 0.55, 0.05, 20]} />
         </mesh>
-        <mesh ref={armR} position={[0.55, 1.35, 0]} castShadow material={bodyMat}>
-          <boxGeometry args={[0.22, 0.9, 0.22]} />
+        <mesh position={[0, 2.28, 0]} castShadow material={gearMat}>
+          <cylinderGeometry args={[0.3, 0.34, 0.26, 20]} />
         </mesh>
+        <mesh position={[0, 2.18, 0]} material={accentMat}>
+          <torusGeometry args={[0.33, 0.035, 8, 26]} />
+        </mesh>
+
+        {/* Arms — shoulder group rotates */}
+        <group ref={armL} position={[-0.42, 1.45, 0]}>
+          <mesh position={[0, -0.4, 0]} castShadow material={bodyMat}>
+            <capsuleGeometry args={[0.11, 0.55, 6, 10]} />
+          </mesh>
+          <mesh position={[0, -0.8, 0]} material={skinMat}>
+            <sphereGeometry args={[0.13, 12, 12]} />
+          </mesh>
+        </group>
+        <group ref={armR} position={[0.42, 1.45, 0]}>
+          <mesh position={[0, -0.4, 0]} castShadow material={bodyMat}>
+            <capsuleGeometry args={[0.11, 0.55, 6, 10]} />
+          </mesh>
+          <mesh position={[0, -0.8, 0]} material={skinMat}>
+            <sphereGeometry args={[0.13, 12, 12]} />
+          </mesh>
+        </group>
+
         {/* Legs */}
-        <mesh ref={legL} position={[-0.22, 0.45, 0]} castShadow material={gearMat}>
-          <boxGeometry args={[0.28, 0.9, 0.28]} />
-        </mesh>
-        <mesh ref={legR} position={[0.22, 0.45, 0]} castShadow material={gearMat}>
-          <boxGeometry args={[0.28, 0.9, 0.28]} />
-        </mesh>
+        <group ref={legL} position={[-0.18, 0.55, 0]}>
+          <mesh position={[0, -0.32, 0]} castShadow material={gearMat}>
+            <capsuleGeometry args={[0.14, 0.55, 6, 10]} />
+          </mesh>
+          <mesh position={[0, -0.72, 0.06]} castShadow material={bootMat}>
+            <boxGeometry args={[0.26, 0.16, 0.36]} />
+          </mesh>
+        </group>
+        <group ref={legR} position={[0.18, 0.55, 0]}>
+          <mesh position={[0, -0.32, 0]} castShadow material={gearMat}>
+            <capsuleGeometry args={[0.14, 0.55, 6, 10]} />
+          </mesh>
+          <mesh position={[0, -0.72, 0.06]} castShadow material={bootMat}>
+            <boxGeometry args={[0.26, 0.16, 0.36]} />
+          </mesh>
+        </group>
       </group>
     </group>
   );

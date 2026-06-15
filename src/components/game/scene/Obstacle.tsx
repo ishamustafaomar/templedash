@@ -8,91 +8,160 @@ interface Props { ob: ObstacleEntity; }
 
 export function Obstacle({ ob }: Props) {
   const ref = useRef<THREE.Group>(null!);
+  const sawBlade = useRef<THREE.Group>(null!);
   const x = LANE_X[ob.lane];
 
-  const mat = useMemo(() => new THREE.MeshStandardMaterial({
-    color: ob.kind === "saw" ? 0xc0c0c0 : 0x6a3a18,
-    roughness: 0.6, metalness: ob.kind === "saw" ? 0.7 : 0.1,
-  }), [ob.kind]);
-  const trimMat = useMemo(() => new THREE.MeshStandardMaterial({ color: 0xff6020, roughness: 0.5, emissive: 0xff2000, emissiveIntensity: 0.4 }), []);
+  const stoneMat = useMemo(() => new THREE.MeshStandardMaterial({
+    color: 0x7a6a55, roughness: 0.95, metalness: 0.05,
+  }), []);
+  const woodMat = useMemo(() => new THREE.MeshStandardMaterial({
+    color: 0x6b3a18, roughness: 0.85, metalness: 0.05,
+  }), []);
+  const metalMat = useMemo(() => new THREE.MeshStandardMaterial({
+    color: 0xb8bcc0, roughness: 0.35, metalness: 0.9,
+  }), []);
+  const dangerMat = useMemo(() => new THREE.MeshStandardMaterial({
+    color: 0xff5020, roughness: 0.5, emissive: 0xff3000, emissiveIntensity: 0.7,
+  }), []);
+  const goldMat = useMemo(() => new THREE.MeshStandardMaterial({
+    color: 0xd4a437, roughness: 0.4, metalness: 0.85, emissive: 0x553200, emissiveIntensity: 0.3,
+  }), []);
 
   useFrame((_, dt) => {
-    if (ob.kind === "saw" && ref.current) {
-      ref.current.children[0].rotation.z += dt * 10;
+    if (ob.kind === "saw" && sawBlade.current) {
+      sawBlade.current.rotation.z += dt * 12;
     }
   });
 
   if (ob.kind === "lowbar") {
+    // Carved stone arch with glowing runes — slide under
     return (
       <group ref={ref} position={[x, 0, ob.z]}>
-        {/* horizontal bar at head height — must SLIDE under */}
-        <mesh position={[0, 1.7, 0]} castShadow material={mat}>
-          <boxGeometry args={[1.8, 0.25, 0.35]} />
+        {/* posts */}
+        <mesh position={[-0.95, 1.0, 0]} castShadow material={stoneMat}>
+          <boxGeometry args={[0.3, 2.0, 0.4]} />
         </mesh>
-        <mesh position={[0, 1.7, 0]} material={trimMat}>
-          <boxGeometry args={[1.85, 0.08, 0.4]} />
+        <mesh position={[0.95, 1.0, 0]} castShadow material={stoneMat}>
+          <boxGeometry args={[0.3, 2.0, 0.4]} />
         </mesh>
-        {/* support posts */}
-        <mesh position={[-0.9, 1.0, 0]} material={mat}><boxGeometry args={[0.18, 1.95, 0.18]} /></mesh>
-        <mesh position={[0.9, 1.0, 0]} material={mat}><boxGeometry args={[0.18, 1.95, 0.18]} /></mesh>
+        {/* crossbar (the head-height bar) */}
+        <mesh position={[0, 1.78, 0]} castShadow material={stoneMat}>
+          <boxGeometry args={[2.1, 0.32, 0.4]} />
+        </mesh>
+        {/* gold rune trim */}
+        <mesh position={[0, 1.78, 0.21]} material={goldMat}>
+          <boxGeometry args={[2.0, 0.12, 0.04]} />
+        </mesh>
+        <mesh position={[0, 1.78, 0.23]} material={dangerMat}>
+          <boxGeometry args={[0.18, 0.18, 0.02]} />
+        </mesh>
+        <pointLight position={[0, 1.78, 0.5]} color="#ff8030" intensity={0.6} distance={3} />
       </group>
     );
   }
 
   if (ob.kind === "hurdle") {
+    // Stacked stone block with banded gold trim — jump over
     return (
       <group ref={ref} position={[x, 0, ob.z]}>
-        <mesh position={[0, 0.45, 0]} castShadow material={mat}>
-          <boxGeometry args={[1.6, 0.9, 0.4]} />
+        <mesh position={[0, 0.35, 0]} castShadow material={stoneMat}>
+          <boxGeometry args={[1.7, 0.7, 0.55]} />
         </mesh>
-        <mesh position={[0, 0.88, 0]} material={trimMat}>
-          <boxGeometry args={[1.65, 0.08, 0.42]} />
+        <mesh position={[0, 0.72, 0]} castShadow material={woodMat}>
+          <boxGeometry args={[1.75, 0.18, 0.58]} />
+        </mesh>
+        <mesh position={[0, 0.82, 0]} material={goldMat}>
+          <boxGeometry args={[1.78, 0.05, 0.6]} />
+        </mesh>
+        {/* corner accents */}
+        <mesh position={[-0.82, 0.72, 0]} material={goldMat}>
+          <boxGeometry args={[0.12, 0.22, 0.62]} />
+        </mesh>
+        <mesh position={[0.82, 0.72, 0]} material={goldMat}>
+          <boxGeometry args={[0.12, 0.22, 0.62]} />
         </mesh>
       </group>
     );
   }
 
   if (ob.kind === "blocker") {
+    // Tall idol totem — change lanes
     return (
       <group ref={ref} position={[x, 0, ob.z]}>
-        <mesh position={[0, 1.2, 0]} castShadow material={mat}>
-          <boxGeometry args={[1.7, 2.4, 0.6]} />
+        {/* base */}
+        <mesh position={[0, 0.2, 0]} castShadow material={stoneMat}>
+          <boxGeometry args={[1.7, 0.4, 0.7]} />
         </mesh>
-        <mesh position={[0, 2.4, 0]} material={trimMat}>
-          <boxGeometry args={[1.75, 0.1, 0.62]} />
+        {/* body */}
+        <mesh position={[0, 1.1, 0]} castShadow material={stoneMat}>
+          <boxGeometry args={[1.5, 1.6, 0.55]} />
         </mesh>
+        {/* head */}
+        <mesh position={[0, 2.15, 0]} castShadow material={stoneMat}>
+          <boxGeometry args={[1.3, 0.5, 0.55]} />
+        </mesh>
+        {/* eyes */}
+        <mesh position={[-0.32, 2.15, 0.29]} material={dangerMat}>
+          <boxGeometry args={[0.2, 0.18, 0.04]} />
+        </mesh>
+        <mesh position={[0.32, 2.15, 0.29]} material={dangerMat}>
+          <boxGeometry args={[0.2, 0.18, 0.04]} />
+        </mesh>
+        {/* mouth */}
+        <mesh position={[0, 1.95, 0.29]} material={dangerMat}>
+          <boxGeometry args={[0.55, 0.08, 0.04]} />
+        </mesh>
+        {/* gold collar */}
+        <mesh position={[0, 1.85, 0]} material={goldMat}>
+          <boxGeometry args={[1.55, 0.1, 0.58]} />
+        </mesh>
+        <pointLight position={[0, 2.15, 0.6]} color="#ff4020" intensity={0.5} distance={2.5} />
       </group>
     );
   }
 
-  // saw
+  // saw — buzzsaw on wooden mount
   return (
     <group ref={ref} position={[x, 0, ob.z]}>
-      <group position={[0, 1.0, 0]}>
-        <mesh castShadow material={mat}>
-          <cylinderGeometry args={[1.0, 1.0, 0.12, 16]} />
+      {/* base */}
+      <mesh position={[0, 0.12, 0]} castShadow material={woodMat}>
+        <boxGeometry args={[1.6, 0.24, 0.6]} />
+      </mesh>
+      {/* mast */}
+      <mesh position={[0, 0.55, 0]} material={woodMat}>
+        <boxGeometry args={[0.16, 0.9, 0.16]} />
+      </mesh>
+      {/* spinning blade */}
+      <group ref={sawBlade} position={[0, 1.05, 0]}>
+        <mesh castShadow material={metalMat} rotation={[Math.PI / 2, 0, 0]}>
+          <cylinderGeometry args={[0.95, 0.95, 0.08, 24]} />
         </mesh>
-        {/* teeth */}
-        {Array.from({ length: 8 }, (_, i) => {
-          const a = (i / 8) * Math.PI * 2;
+        {Array.from({ length: 12 }, (_, i) => {
+          const a = (i / 12) * Math.PI * 2;
           return (
-            <mesh key={i} position={[Math.cos(a) * 1.05, 0, Math.sin(a) * 1.05]} rotation={[0, -a, 0]} material={trimMat}>
-              <boxGeometry args={[0.25, 0.15, 0.15]} />
+            <mesh
+              key={i}
+              position={[Math.cos(a) * 1.0, Math.sin(a) * 1.0, 0]}
+              rotation={[0, 0, a + Math.PI / 2]}
+              material={metalMat}
+              castShadow
+            >
+              <coneGeometry args={[0.1, 0.22, 4]} />
             </mesh>
           );
         })}
+        <mesh material={dangerMat} rotation={[Math.PI / 2, 0, 0]}>
+          <cylinderGeometry args={[0.22, 0.22, 0.1, 16]} />
+        </mesh>
       </group>
-      {/* base */}
-      <mesh position={[0, 0.1, 0]} material={mat}>
-        <boxGeometry args={[1.6, 0.2, 0.6]} />
-      </mesh>
+      <pointLight position={[0, 1.05, 0.5]} color="#ff5020" intensity={0.6} distance={3} />
     </group>
   );
 }
 
 export const OBSTACLE_AABB: Record<ObstacleEntity["kind"], { yMin: number; yMax: number; xHalf: number; zHalf: number; }> = {
-  lowbar:  { yMin: 1.45, yMax: 2.00, xHalf: 0.95, zHalf: 0.25 },
-  hurdle:  { yMin: 0.00, yMax: 0.95, xHalf: 0.85, zHalf: 0.25 },
-  blocker: { yMin: 0.00, yMax: 2.45, xHalf: 0.90, zHalf: 0.35 },
+  lowbar:  { yMin: 1.45, yMax: 2.00, xHalf: 1.05, zHalf: 0.25 },
+  hurdle:  { yMin: 0.00, yMax: 0.95, xHalf: 0.85, zHalf: 0.30 },
+  blocker: { yMin: 0.00, yMax: 2.45, xHalf: 0.85, zHalf: 0.35 },
   saw:     { yMin: 0.10, yMax: 2.05, xHalf: 1.00, zHalf: 0.30 },
 };
