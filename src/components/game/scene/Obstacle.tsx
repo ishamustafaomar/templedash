@@ -133,10 +133,7 @@ export function Obstacle({ ob }: Props) {
       </mesh>
       {/* spinning blade */}
       <group ref={sawBlade} position={[0, 1.05, 0]}>
-        <mesh castShadow material={metalMat}>
-          <cylinderGeometry args={[0.95, 0.95, 0.08, 24]} rotation={[Math.PI / 2, 0, 0]} />
-        </mesh>
-        <mesh material={metalMat} rotation={[Math.PI / 2, 0, 0]}>
+        <mesh castShadow material={metalMat} rotation={[Math.PI / 2, 0, 0]}>
           <cylinderGeometry args={[0.95, 0.95, 0.08, 24]} />
         </mesh>
         {Array.from({ length: 12 }, (_, i) => {
@@ -153,8 +150,8 @@ export function Obstacle({ ob }: Props) {
             </mesh>
           );
         })}
-        <mesh material={dangerMat}>
-          <cylinderGeometry args={[0.22, 0.22, 0.1, 16]} rotation={[Math.PI / 2, 0, 0]} />
+        <mesh material={dangerMat} rotation={[Math.PI / 2, 0, 0]}>
+          <cylinderGeometry args={[0.22, 0.22, 0.1, 16]} />
         </mesh>
       </group>
       <pointLight position={[0, 1.05, 0.5]} color="#ff5020" intensity={0.6} distance={3} />
