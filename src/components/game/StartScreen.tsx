@@ -26,14 +26,15 @@ export function StartScreen({ onPlay, tiltEnabled, onToggleTilt, onSignIn, onSig
         className="font-cinzel font-black text-6xl md:text-8xl text-primary text-glow-gold tracking-wider text-center"
       >
         <span className="block">Temple Dash</span>
-        <span className="sr-only"> — Ancient Endless Runner</span>
+        <span className="sr-only"> — Free 3D Endless Runner Game</span>
       </motion.h1>
-      <p className="mt-3 text-muted-foreground text-center max-w-md">
-        Ancient corridors. Endless danger. How far can you run?
+      <p className="mt-3 text-muted-foreground text-center max-w-md text-base md:text-lg">
+        The free 3D endless runner. Dodge traps, grab coins, unlock heroes — no download, plays instantly on mobile &amp; desktop.
       </p>
       {highScore > 0 && (
         <p className="mt-2 text-sm text-primary/80 font-cinzel">Best: {highScore.toLocaleString()}</p>
       )}
+
 
       <div className="mt-8 rounded-2xl bg-card/60 border border-border px-6 py-4 text-sm text-muted-foreground max-w-sm">
         {isMobile ? (
