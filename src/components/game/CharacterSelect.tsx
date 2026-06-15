@@ -52,6 +52,7 @@ export function CharacterSelect({ onConfirm, onBack }: Props) {
           <Check className="mr-2" /> Select {char.name}
         </Button>
       </div>
+      </div>
     </motion.div>
   );
 }
