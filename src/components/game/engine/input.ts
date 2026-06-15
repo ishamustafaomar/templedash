@@ -43,14 +43,18 @@ export function useGameInput(enabled: boolean) {
       }
     };
 
+    const onCancel = () => { tracking = false; };
+
     window.addEventListener("keydown", onKey);
     window.addEventListener("pointerdown", onDown);
     window.addEventListener("pointerup", onUp);
-    window.addEventListener("pointercancel", () => { tracking = false; });
+    window.addEventListener("pointercancel", onCancel);
     return () => {
       window.removeEventListener("keydown", onKey);
       window.removeEventListener("pointerdown", onDown);
       window.removeEventListener("pointerup", onUp);
+      window.removeEventListener("pointercancel", onCancel);
     };
   }, [enabled]);
 }
+

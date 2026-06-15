@@ -26,11 +26,15 @@ interface GameState {
   coins3d: CoinEntity[];
   powerups3d: PowerUpEntity[];
   nextSpawnZ: number; // most negative z already spawned
+  /** Bumped only when entity membership changes (add/remove), not on per-frame position updates.
+   *  Components that render entity lists should subscribe to this instead of the arrays themselves. */
+  entitiesVersion: number;
 
   // power-up state
   active: Record<PowerupType, boolean>;
   timers: Record<PowerupType, number>;
   shieldCount: number;
+
 
   // hud flash
   flashPowerup: PowerupType | null;
@@ -74,6 +78,8 @@ export const useGameStore = create<GameState>((set, get) => ({
   coins3d: [],
   powerups3d: [],
   nextSpawnZ: -40,
+  entitiesVersion: 0,
+
 
   active: { ...initialActive },
   timers: { ...initialTimers },
@@ -90,7 +96,8 @@ export const useGameStore = create<GameState>((set, get) => ({
     lane: 1, targetLane: 1, laneChangeT: 1,
     y: 0, vy: 0, isJumping: false, isSliding: false, slideT: 0,
     obstacles: [], coins3d: [], powerups3d: [],
-    nextSpawnZ: -40,
+    nextSpawnZ: -40, entitiesVersion: 0,
+
     active: { ...initialActive }, timers: { ...initialTimers }, shieldCount: 0,
     flashPowerup: null, tripping: false,
   }),

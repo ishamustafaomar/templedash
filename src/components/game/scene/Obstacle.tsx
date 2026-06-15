@@ -1,4 +1,4 @@
-import { useRef, useMemo } from "react";
+import { memo, useRef, useMemo } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import type { ObstacleEntity } from "../engine/types";
@@ -6,7 +6,8 @@ import { LANE_X } from "../engine/constants";
 
 interface Props { ob: ObstacleEntity; }
 
-export function Obstacle({ ob }: Props) {
+function ObstacleImpl({ ob }: Props) {
+
   const ref = useRef<THREE.Group>(null!);
   const sawBlade = useRef<THREE.Group>(null!);
   const x = LANE_X[ob.lane];
@@ -28,10 +29,12 @@ export function Obstacle({ ob }: Props) {
   }), []);
 
   useFrame((_, dt) => {
+    if (ref.current) ref.current.position.z = ob.z;
     if (ob.kind === "saw" && sawBlade.current) {
       sawBlade.current.rotation.z += dt * 12;
     }
   });
+
 
   if (ob.kind === "lowbar") {
     // Carved stone arch with glowing runes — slide under
@@ -158,6 +161,9 @@ export function Obstacle({ ob }: Props) {
     </group>
   );
 }
+
+export const Obstacle = memo(ObstacleImpl, (a, b) => a.ob === b.ob);
+
 
 export const OBSTACLE_AABB: Record<ObstacleEntity["kind"], { yMin: number; yMax: number; xHalf: number; zHalf: number; }> = {
   lowbar:  { yMin: 1.45, yMax: 2.00, xHalf: 1.05, zHalf: 0.25 },

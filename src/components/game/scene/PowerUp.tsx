@@ -1,4 +1,4 @@
-import { useRef, useMemo } from "react";
+import { memo, useRef, useMemo } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import type { PowerUpEntity } from "../engine/types";
@@ -13,7 +13,7 @@ const COLORS = {
 
 interface Props { pu: PowerUpEntity; }
 
-export function PowerUp({ pu }: Props) {
+function PowerUpImpl({ pu }: Props) {
   const ref = useRef<THREE.Group>(null!);
   const ring = useRef<THREE.Mesh>(null!);
   const color = COLORS[pu.type];
@@ -33,6 +33,7 @@ export function PowerUp({ pu }: Props) {
   useFrame((_, dt) => {
     if (!ref.current) return;
     ref.current.rotation.y += dt * 2.2;
+    ref.current.position.z = pu.z;
     ref.current.position.y = 1.4 + Math.sin(performance.now() * 0.004) * 0.18;
     if (ring.current) ring.current.rotation.z += dt * 1.5;
   });
@@ -51,3 +52,6 @@ export function PowerUp({ pu }: Props) {
     </group>
   );
 }
+
+export const PowerUp = memo(PowerUpImpl, (a, b) => a.pu === b.pu);
+

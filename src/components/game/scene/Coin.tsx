@@ -1,4 +1,4 @@
-import { useRef, useMemo } from "react";
+import { memo, useRef, useMemo } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import type { CoinEntity } from "../engine/types";
@@ -6,7 +6,7 @@ import { LANE_X } from "../engine/constants";
 
 interface Props { coin: CoinEntity; }
 
-export function Coin({ coin }: Props) {
+function CoinImpl({ coin }: Props) {
   const group = useRef<THREE.Group>(null!);
   const coinMat = useMemo(() => new THREE.MeshStandardMaterial({
     color: 0xffd54a,
@@ -26,6 +26,7 @@ export function Coin({ coin }: Props) {
   useFrame((_, dt) => {
     if (!group.current) return;
     group.current.rotation.y += dt * 4.5;
+    group.current.position.z = coin.z;
     group.current.position.y =
       coin.y + Math.sin(performance.now() * 0.004 + coin.z) * 0.08;
   });
@@ -49,3 +50,6 @@ export function Coin({ coin }: Props) {
     </group>
   );
 }
+
+export const Coin = memo(CoinImpl, (a, b) => a.coin === b.coin);
+
