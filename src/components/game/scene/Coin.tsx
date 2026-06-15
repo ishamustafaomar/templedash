@@ -1,55 +1,38 @@
-import { memo, useRef, useMemo } from "react";
+import { memo, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import type { CoinEntity } from "../engine/types";
 import { LANE_X } from "../engine/constants";
 
+// Shared geometry + material across every coin — created once, GPU-friendly.
+const DISC_GEO = new THREE.CylinderGeometry(0.34, 0.34, 0.07, 16);
+DISC_GEO.rotateX(Math.PI / 2);
+const COIN_MAT = new THREE.MeshLambertMaterial({
+  color: 0xffd54a,
+  emissive: 0xffa000,
+  emissiveIntensity: 0.9,
+});
+
 interface Props { coin: CoinEntity; }
 
 function CoinImpl({ coin }: Props) {
-  const group = useRef<THREE.Group>(null!);
-  const coinMat = useMemo(() => new THREE.MeshStandardMaterial({
-    color: 0xffd54a,
-    emissive: 0xffa000,
-    emissiveIntensity: 0.55,
-    roughness: 0.18,
-    metalness: 0.95,
-  }), []);
-  const rimMat = useMemo(() => new THREE.MeshStandardMaterial({
-    color: 0xfff1a8,
-    emissive: 0xffcc33,
-    emissiveIntensity: 0.8,
-    roughness: 0.1,
-    metalness: 1.0,
-  }), []);
-
+  const ref = useRef<THREE.Mesh>(null!);
   useFrame((_, dt) => {
-    if (!group.current) return;
-    group.current.rotation.y += dt * 4.5;
-    group.current.position.z = coin.z;
-    group.current.position.y =
+    if (!ref.current) return;
+    ref.current.rotation.z += dt * 4.5;
+    ref.current.position.z = coin.z;
+    ref.current.position.y =
       coin.y + Math.sin(performance.now() * 0.004 + coin.z) * 0.08;
   });
-
   if (coin.collected) return null;
   return (
-    <group ref={group} position={[LANE_X[coin.lane], coin.y, coin.z]}>
-      {/* core disc */}
-      <mesh material={coinMat} castShadow rotation={[Math.PI / 2, 0, 0]}>
-        <cylinderGeometry args={[0.34, 0.34, 0.07, 24]} />
-      </mesh>
-      {/* outer rim */}
-      <mesh material={rimMat} rotation={[Math.PI / 2, 0, 0]}>
-        <torusGeometry args={[0.34, 0.04, 10, 28]} />
-      </mesh>
-      {/* embossed star */}
-      <mesh position={[0, 0, 0.04]} material={rimMat}>
-        <torusGeometry args={[0.13, 0.025, 6, 18]} />
-      </mesh>
-      <pointLight color={0xffc24a} intensity={0.6} distance={2.5} />
-    </group>
+    <mesh
+      ref={ref}
+      position={[LANE_X[coin.lane], coin.y, coin.z]}
+      geometry={DISC_GEO}
+      material={COIN_MAT}
+    />
   );
 }
 
 export const Coin = memo(CoinImpl, (a, b) => a.coin === b.coin);
-
