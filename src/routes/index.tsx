@@ -56,15 +56,13 @@ function GamePage() {
     return window.localStorage.getItem("td:tilt") === "1";
   });
 
-  // Subscribe to live HUD values
-  const hudScore = useGameStore((s) => s.score);
-  const hudCoins = useGameStore((s) => s.coins);
-  const hudDist = useGameStore((s) => s.distance);
-  const active = useGameStore((s) => s.active);
-  const timers = useGameStore((s) => s.timers);
+  // NOTE: deliberately do NOT subscribe to per-frame store values (score, coins, distance,
+  // active, timers) here — each subscription would re-render this whole page every frame.
+  // HUD components subscribe internally with selectors / shallow eq.
 
   useGameInput(gameState === "playing");
   useTiltInput(gameState === "playing" && tiltEnabled);
+
 
   const handleToggleTilt = useCallback(async () => {
     if (!tiltEnabled) {
