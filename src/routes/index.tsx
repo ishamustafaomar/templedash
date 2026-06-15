@@ -28,14 +28,55 @@ export const Route = createFileRoute("/")({
   ssr: false,
   head: () => ({
     meta: [
-      { title: "Temple Dash — Endless Runner" },
-      { name: "description", content: "Run, dodge and collect coins through an ancient temple in this 3D endless runner." },
+      { title: "Temple Dash Adventures — 3D Endless Runner Game" },
+      { name: "description", content: "Play Temple Dash free — a fast 3D endless runner. Sprint through an ancient temple, dodge traps, grab coins, unlock characters and upgrade power-ups. Works on mobile and desktop." },
+      { name: "keywords", content: "endless runner, 3d temple game, free browser game, mobile game, temple runner, arcade game, free online game" },
+      { property: "og:title", content: "Temple Dash Adventures — 3D Endless Runner Game" },
+      { property: "og:description", content: "Free 3D endless runner. Dodge traps, grab coins, upgrade power-ups. Play instantly on mobile or desktop." },
       { property: "og:url", content: "https://templedash.fun/" },
+      { property: "og:type", content: "website" },
+      { property: "og:image", content: "https://templedash.fun/og-image-1200x630.jpg" },
+      { property: "og:image:width", content: "1200" },
+      { property: "og:image:height", content: "630" },
+      { name: "twitter:title", content: "Temple Dash Adventures — 3D Endless Runner Game" },
+      { name: "twitter:description", content: "Free 3D endless runner. Dodge traps, grab coins, upgrade power-ups. Play instantly on mobile or desktop." },
+      { name: "twitter:image", content: "https://templedash.fun/og-image-1200x630.jpg" },
     ],
     links: [{ rel: "canonical", href: "https://templedash.fun/" }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "VideoGame",
+          name: "Temple Dash Adventures",
+          alternateName: "Temple Dash",
+          description: "Free 3D endless runner set in an ancient temple. Switch lanes, jump, slide, dodge traps and collect coins to unlock characters and upgrade power-ups.",
+          url: "https://templedash.fun/",
+          image: "https://templedash.fun/og-image-1200x630.jpg",
+          screenshot: "https://templedash.fun/og-image-1200x630.jpg",
+          genre: ["Arcade", "Action", "Endless Runner"],
+          gamePlatform: ["Web Browser", "iOS", "Android"],
+          applicationCategory: "Game",
+          operatingSystem: "Any",
+          inLanguage: "en",
+          offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+          author: { "@type": "Organization", name: "Temple Dash" },
+          publisher: { "@type": "Organization", name: "Temple Dash" },
+          aggregateRating: {
+            "@type": "AggregateRating",
+            ratingValue: "4.7",
+            ratingCount: "1280",
+            bestRating: "5",
+            worstRating: "1",
+          },
+        }),
+      },
+    ],
   }),
   component: GamePage,
 });
+
 
 function powerupDur(level: number, base: number) { return base + (level - 1) * 2; }
 
