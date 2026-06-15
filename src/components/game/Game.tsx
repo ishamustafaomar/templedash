@@ -233,11 +233,14 @@ function World({ coinMultiplier, powerupDurations, onCoin, onPowerup, onCrash, o
       score: s.score + scoreAdd,
       shieldCount,
     };
-    if (activeChanged) { patch.active = active; patch.timers = timers; }
-    else if (s.timers.magnet !== timers.magnet || s.timers.speed !== timers.speed || s.timers.invincibility !== timers.invincibility) {
+    if (activeChanged) patch.active = active;
+    // Update timers reference each frame while a non-shield powerup is ticking so the
+    // HUD progress bar can animate; otherwise leave it alone to skip the re-render.
+    if (activeChanged || active.magnet || active.speed || active.invincibility) {
       patch.timers = timers;
     }
     if (membershipChanged) patch.entitiesVersion = s.entitiesVersion + 1;
+
     useGameStore.setState(patch);
 
     if (crashed && !crashedRef.current) {
