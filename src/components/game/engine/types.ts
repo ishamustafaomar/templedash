@@ -26,7 +26,7 @@ export interface PowerUpEntity {
   z: number;
 }
 
-export type GameStatus = "idle" | "running" | "over";
+export type GameStatus = "idle" | "running" | "crashing" | "over";
 
 export interface FinalStats {
   score: number;
