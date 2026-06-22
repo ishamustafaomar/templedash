@@ -43,6 +43,10 @@ interface GameState {
   flashPowerup: PowerupType | null;
   tripping: boolean;
 
+  // input buffer: holds the next lane move if one is requested mid-change,
+  // consumed by Player as soon as the current lane change completes.
+  queuedMove: "left" | "right" | null;
+
   // setters
   setStatus: (s: GameStatus) => void;
   reset: () => void;
@@ -94,6 +98,7 @@ export const useGameStore = create<GameState>((set, get) => ({
 
   flashPowerup: null,
   tripping: false,
+  queuedMove: null,
 
   setStatus: (s) => set({ status: s }),
 
@@ -106,7 +111,7 @@ export const useGameStore = create<GameState>((set, get) => ({
     nextSpawnZ: -70, chunkIndex: 0, entitiesVersion: 0,
 
     active: { ...initialActive }, timers: { ...initialTimers }, shieldCount: 0,
-    flashPowerup: null, tripping: false,
+    flashPowerup: null, tripping: false, queuedMove: null,
   }),
 
   setLane: (l) => set({ lane: l }),
