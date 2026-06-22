@@ -26,6 +26,9 @@ interface GameState {
   coins3d: CoinEntity[];
   powerups3d: PowerUpEntity[];
   nextSpawnZ: number; // most negative z already spawned
+  /** Counter of how many chunks have been spawned this run — used by the
+   *  spawner to keep the first few chunks safe (no obstacles) for onboarding. */
+  chunkIndex: number;
   /** Bumped only when entity membership changes (add/remove), not on per-frame position updates.
    *  Components that render entity lists should subscribe to this instead of the arrays themselves. */
   entitiesVersion: number;
@@ -77,7 +80,11 @@ export const useGameStore = create<GameState>((set, get) => ({
   obstacles: [],
   coins3d: [],
   powerups3d: [],
-  nextSpawnZ: -40,
+  // Push the first spawn well ahead of the player so there is ~3-4 seconds of
+  // empty corridor before any obstacle can appear — gives new players time to
+  // settle into the controls before the first jump/slide decision.
+  nextSpawnZ: -70,
+  chunkIndex: 0,
   entitiesVersion: 0,
 
 
@@ -96,7 +103,7 @@ export const useGameStore = create<GameState>((set, get) => ({
     lane: 1, targetLane: 1, laneChangeT: 1,
     y: 0, vy: 0, isJumping: false, isSliding: false, slideT: 0,
     obstacles: [], coins3d: [], powerups3d: [],
-    nextSpawnZ: -40, entitiesVersion: 0,
+    nextSpawnZ: -70, chunkIndex: 0, entitiesVersion: 0,
 
     active: { ...initialActive }, timers: { ...initialTimers }, shieldCount: 0,
     flashPowerup: null, tripping: false,

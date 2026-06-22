@@ -108,17 +108,19 @@ function World({ coinMultiplier, powerupDurations, onCoin, onPowerup, onCrash, o
 
     // Spawn chunks ahead
     let nextSpawnZ = s.nextSpawnZ + dz;
-    let chunkIdx = 0;
+    let chunkIndex = s.chunkIndex;
+    let spawnsThisFrame = 0;
     while (nextSpawnZ > -SPAWN_AHEAD) {
       const addPU = Math.random() < 0.25;
-      const chunk = spawnChunk(nextSpawnZ, addPU);
+      const chunk = spawnChunk(nextSpawnZ, addPU, chunkIndex);
       for (let i = 0; i < chunk.obstacles.length; i++) obstacles.push(chunk.obstacles[i]);
       for (let i = 0; i < chunk.coins.length; i++) coins3d.push(chunk.coins[i]);
       for (let i = 0; i < chunk.powerups.length; i++) powerups3d.push(chunk.powerups[i]);
       if (chunk.obstacles.length || chunk.coins.length || chunk.powerups.length) membershipChanged = true;
       nextSpawnZ -= CHUNK_LENGTH;
-      chunkIdx++;
-      if (chunkIdx > 10) break;
+      chunkIndex++;
+      spawnsThisFrame++;
+      if (spawnsThisFrame > 10) break;
     }
 
     // Player state for collision
@@ -223,6 +225,7 @@ function World({ coinMultiplier, powerupDurations, onCoin, onPowerup, onCrash, o
 
     const patch: Partial<ReturnType<typeof useGameStore.getState>> = {
       nextSpawnZ,
+      chunkIndex,
       coins: s.coins + coinAdd,
       score: s.score + scoreAdd,
       shieldCount,
@@ -239,13 +242,18 @@ function World({ coinMultiplier, powerupDurations, onCoin, onPowerup, onCrash, o
 
     if (crashed && !crashedRef.current) {
       crashedRef.current = true;
+      // Immediately stop the world so the player understands the run ended on
+      // contact — no more drifting forward, no ambiguous "did I die or not?".
+      // The trip overlay plays during this brief pause, then the Game Over
+      // screen appears with a tight, predictable delay.
+      useGameStore.setState({ status: "crashing" });
       onSound?.("collision");
       onCrash();
       const final = { score: Math.floor(s.score + scoreAdd), coins: s.coins + coinAdd, distance: s.distance };
       setTimeout(() => {
         useGameStore.setState({ status: "over" });
         onGameOver(final);
-      }, 500);
+      }, 350);
     }
   });
 

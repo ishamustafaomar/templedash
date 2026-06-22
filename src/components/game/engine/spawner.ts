@@ -75,10 +75,31 @@ const PATTERNS: Pattern[] = [
 
 const POWERUP_TYPES: PowerupType[] = ["magnet", "shield", "speed", "invincibility"];
 
-export function spawnChunk(chunkStartZ: number, addPowerup: boolean) {
-  const pattern = PATTERNS[Math.floor(Math.random() * PATTERNS.length)];
+// Onboarding ramp: first couple of chunks have NO obstacles so a first-time
+// player has a few seconds to settle into the rhythm before anything punishing
+// shows up. Coins still appear so the corridor doesn't look empty.
+const INTRO_PATTERN: Pattern = (z) => ({
+  obstacles: [],
+  coins: coinLine(1, z - 2, 8, 2, 1.2),
+  powerups: [],
+});
+
+// Easy "warm-up" patterns used right after the intro: only single-lane hurdles
+// or single-lane saws so the player always has two clear lanes to escape into.
+const EASY_PATTERNS: Pattern[] = [PATTERNS[0], PATTERNS[1], PATTERNS[4]];
+
+export function spawnChunk(chunkStartZ: number, addPowerup: boolean, chunkIndex = 0) {
+  let pattern: Pattern;
+  if (chunkIndex < 2) {
+    pattern = INTRO_PATTERN;
+  } else if (chunkIndex < 5) {
+    pattern = EASY_PATTERNS[Math.floor(Math.random() * EASY_PATTERNS.length)];
+  } else {
+    pattern = PATTERNS[Math.floor(Math.random() * PATTERNS.length)];
+  }
   const result = pattern(chunkStartZ);
-  if (addPowerup) {
+  // No power-ups during the silent intro — keeps the opening calm.
+  if (addPowerup && chunkIndex >= 2) {
     const l = lanes[Math.floor(Math.random() * 3)] as Lane;
     const type = POWERUP_TYPES[Math.floor(Math.random() * POWERUP_TYPES.length)];
     result.powerups.push({ id: id(), type, lane: l, z: chunkStartZ - CHUNK_LENGTH / 2 });
