@@ -8,7 +8,7 @@ export const PLAYER_SLIDE_HEIGHT = 0.9;
 export const GRAVITY = 38;
 export const JUMP_VELOCITY = 12;
 export const SLIDE_DURATION = 0.7; // seconds
-export const LANE_CHANGE_DURATION = 0.18; // seconds
+export const LANE_CHANGE_DURATION = 0.12; // seconds — snappy at high speed
 
 // World
 export const START_SPEED = 14; // units / sec

@@ -44,7 +44,13 @@ export function Player({ character }: Props) {
     if (s.laneChangeT < 1) {
       const t = Math.min(1, s.laneChangeT + dt / LANE_CHANGE_DURATION);
       useGameStore.setState({ laneChangeT: t });
-      if (t === 1) useGameStore.setState({ lane: s.targetLane });
+      if (t === 1) {
+        useGameStore.setState({ lane: s.targetLane });
+        // Drain a buffered swipe immediately so back-to-back inputs land.
+        const q = useGameStore.getState().queuedMove;
+        if (q === "left") useGameStore.getState().moveLeft();
+        else if (q === "right") useGameStore.getState().moveRight();
+      }
     }
 
     const live = useGameStore.getState();

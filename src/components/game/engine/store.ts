@@ -43,6 +43,10 @@ interface GameState {
   flashPowerup: PowerupType | null;
   tripping: boolean;
 
+  // input buffer: holds the next lane move if one is requested mid-change,
+  // consumed by Player as soon as the current lane change completes.
+  queuedMove: "left" | "right" | null;
+
   // setters
   setStatus: (s: GameStatus) => void;
   reset: () => void;
@@ -94,6 +98,7 @@ export const useGameStore = create<GameState>((set, get) => ({
 
   flashPowerup: null,
   tripping: false,
+  queuedMove: null,
 
   setStatus: (s) => set({ status: s }),
 
@@ -106,7 +111,7 @@ export const useGameStore = create<GameState>((set, get) => ({
     nextSpawnZ: -70, chunkIndex: 0, entitiesVersion: 0,
 
     active: { ...initialActive }, timers: { ...initialTimers }, shieldCount: 0,
-    flashPowerup: null, tripping: false,
+    flashPowerup: null, tripping: false, queuedMove: null,
   }),
 
   setLane: (l) => set({ lane: l }),
@@ -128,16 +133,25 @@ export const useGameStore = create<GameState>((set, get) => ({
   moveLeft: () => {
     const s = get();
     if (s.status !== "running") return;
-    if (s.laneChangeT < 1) return;
     if (s.targetLane === 0) return;
-    set({ lane: s.targetLane, targetLane: (s.targetLane - 1) as Lane, laneChangeT: 0 });
+    // Buffer the input if a lane change is already in flight so back-to-back
+    // swipes at high speed don't get dropped — Player consumes the queue
+    // the instant the current change completes.
+    if (s.laneChangeT < 1) {
+      set({ queuedMove: "left" });
+      return;
+    }
+    set({ lane: s.targetLane, targetLane: (s.targetLane - 1) as Lane, laneChangeT: 0, queuedMove: null });
     void LANE_CHANGE_DURATION;
   },
   moveRight: () => {
     const s = get();
     if (s.status !== "running") return;
-    if (s.laneChangeT < 1) return;
     if (s.targetLane === 2) return;
-    set({ lane: s.targetLane, targetLane: (s.targetLane + 1) as Lane, laneChangeT: 0 });
+    if (s.laneChangeT < 1) {
+      set({ queuedMove: "right" });
+      return;
+    }
+    set({ lane: s.targetLane, targetLane: (s.targetLane + 1) as Lane, laneChangeT: 0, queuedMove: null });
   },
 }));

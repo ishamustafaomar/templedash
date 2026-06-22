@@ -12,7 +12,7 @@ export function CharacterSelect({ onConfirm, onBack }: Props) {
   return (
     <motion.div
       initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-      className="absolute inset-0 z-30 overflow-y-auto overscroll-contain bg-black/75 backdrop-blur-md"
+      className="absolute inset-0 z-30 touch-auto overflow-y-auto overscroll-contain bg-black/75 backdrop-blur-md"
     >
       <div className="min-h-full flex flex-col items-center justify-center px-6 py-8">
       <h2 className="font-cinzel font-bold text-2xl md:text-4xl text-foreground mb-6">Choose Your Runner</h2>
