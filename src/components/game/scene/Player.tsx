@@ -63,6 +63,9 @@ export function Player({ character }: Props) {
     const slideScale = live.isSliding ? PLAYER_SLIDE_HEIGHT / PLAYER_HEIGHT : 1;
     bodyRef.current.scale.y = THREE.MathUtils.lerp(bodyRef.current.scale.y, slideScale, 0.3);
     bodyRef.current.position.y = THREE.MathUtils.lerp(bodyRef.current.position.y, live.isSliding ? -0.4 : 0, 0.3);
+    // Forward dive on slide (rotate around X). Body is yaw-flipped 180°, so positive X tilt dives forward into the run direction.
+    const targetTilt = live.isSliding ? 0.9 : 0;
+    bodyRef.current.rotation.x = THREE.MathUtils.lerp(bodyRef.current.rotation.x, targetTilt, 0.25);
 
     const t = performance.now() * 0.014 * (live.isJumping || live.isSliding ? 0 : 1);
     const swing = Math.sin(t) * 0.85;
@@ -83,7 +86,7 @@ export function Player({ character }: Props) {
 
   return (
     <group ref={group} position={[0, 0, 0]}>
-      <group ref={bodyRef}>
+      <group ref={bodyRef} rotation={[0, Math.PI, 0]}>
         {/* Torso — tapered */}
         <mesh position={[0, 1.05, 0]} material={bodyMat}>
           <capsuleGeometry args={[0.36, 0.7, 6, 12]} />
