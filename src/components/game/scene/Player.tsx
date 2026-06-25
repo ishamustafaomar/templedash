@@ -86,7 +86,7 @@ export function Player({ character }: Props) {
 
   return (
     <group ref={group} position={[0, 0, 0]}>
-      <group ref={bodyRef}>
+      <group ref={bodyRef} rotation={[0, Math.PI, 0]}>
         {/* Torso — tapered */}
         <mesh position={[0, 1.05, 0]} material={bodyMat}>
           <capsuleGeometry args={[0.36, 0.7, 6, 12]} />
