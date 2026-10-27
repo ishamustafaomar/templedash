@@ -39,6 +39,7 @@ export const Route = createFileRoute("/")({
       { property: "og:image:width", content: "1200" },
       { property: "og:image:height", content: "630" },
       { name: "twitter:title", content: "Temple Dash Adventures — 3D Endless Runner Game" },
+      { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:description", content: "Free 3D endless runner. Dodge traps, grab coins, upgrade power-ups. Play instantly on mobile or desktop." },
       { name: "twitter:image", content: "https://templedash.fun/og-image-1200x630.jpg" },
     ],
@@ -213,6 +214,7 @@ function GamePage() {
             score={finalStats.score} coins={finalStats.coins} distance={finalStats.distance}
             highScore={profile?.high_score ?? 0}
             isNewHighScore={isNewHighScore}
+            profile={profile}
             onRestart={() => startGame(selectedCharId)}
             onMenu={() => setGameState("start")}
           />

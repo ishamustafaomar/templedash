@@ -12,6 +12,10 @@ export const Route = createFileRoute("/reset-password")({
     meta: [
       { title: "Reset password — Temple Dash" },
       { name: "description", content: "Set a new password for your Temple Dash account." },
+      { property: "og:title", content: "Reset password — Temple Dash" },
+      { property: "og:description", content: "Set a new password for your Temple Dash account." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { name: "robots", content: "noindex,nofollow" },
     ],
   }),

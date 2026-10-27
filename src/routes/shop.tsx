@@ -14,6 +14,8 @@ export const Route = createFileRoute("/shop")({
       { property: "og:title", content: "Temple Shop — Power-Up Upgrades" },
       { property: "og:description", content: "Spend coins on permanent power-up upgrades in Temple Dash." },
       { property: "og:url", content: "https://templedash.fun/shop" },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
     links: [{ rel: "canonical", href: "https://templedash.fun/shop" }],
   }),
@@ -87,9 +89,9 @@ function ShopPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {!ready
             ? Array.from({ length: 6 }).map((_, i) => <div key={i} className="h-40 rounded-2xl bg-card animate-pulse" />)
-            : SHOP_ITEMS.map((item, i) => (
+            : profile && SHOP_ITEMS.map((item, i) => (
               <motion.div key={item.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}>
-                <ShopItemCard item={item} profile={profile!} onBuy={purchase} busy={busy} />
+                <ShopItemCard item={item} profile={profile} onBuy={purchase} busy={busy} />
               </motion.div>
             ))}
         </div>

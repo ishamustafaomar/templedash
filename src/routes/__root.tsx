@@ -6,6 +6,7 @@ import {
   useRouter,
   HeadContent,
   Scripts,
+  type ErrorComponentProps,
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
 
@@ -34,7 +35,7 @@ function NotFoundComponent() {
   );
 }
 
-function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
+function ErrorComponent({ error, reset }: ErrorComponentProps) {
   console.error(error);
   const router = useRouter();
   useEffect(() => {
@@ -94,8 +95,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "description", content: "Dash through an ancient temple. Switch lanes, jump, slide and collect coins in this 3D endless runner." },
       { property: "og:description", content: "Dash through an ancient temple. Switch lanes, jump, slide and collect coins in this 3D endless runner." },
       { name: "twitter:description", content: "Dash through an ancient temple. Switch lanes, jump, slide and collect coins in this 3D endless runner." },
-      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/RdNgtxijVcNUKO5Vkn5mYqidYrG2/social-images/social-1782669679405-20f7d023-39c0-44ee-b4cd-407a3e15d832.webp" },
-      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/RdNgtxijVcNUKO5Vkn5mYqidYrG2/social-images/social-1782669679405-20f7d023-39c0-44ee-b4cd-407a3e15d832.webp" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },

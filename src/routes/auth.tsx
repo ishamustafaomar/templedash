@@ -9,6 +9,9 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
 export const Route = createFileRoute("/auth")({
   ssr: false,
+  validateSearch: (search: Record<string, unknown>): { redirect?: string } => ({
+    redirect: typeof search.redirect === "string" ? search.redirect : undefined,
+  }),
   head: () => ({
     meta: [
       { title: "Sign in — Temple Dash" },
@@ -16,6 +19,8 @@ export const Route = createFileRoute("/auth")({
       { property: "og:title", content: "Sign in — Temple Dash" },
       { property: "og:description", content: "Sign in to Temple Dash to sync your progress and purchases across devices." },
       { property: "og:url", content: "https://templedash.fun/auth" },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: AuthPage,
