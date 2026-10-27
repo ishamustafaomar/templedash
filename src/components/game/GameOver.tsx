@@ -2,14 +2,17 @@ import { motion } from "framer-motion";
 import { Link } from "@tanstack/react-router";
 import { Trophy, Footprints, Coins, Star, RotateCcw, Home, ShoppingBag } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { nearestUpgrade, type UpgradeProfile } from "@/lib/upgrade-goals";
 
 interface Props {
   score: number; distance: number; coins: number;
   highScore: number; isNewHighScore: boolean;
   onRestart: () => void; onMenu: () => void;
+  profile?: UpgradeProfile;
 }
 
-export function GameOver({ score, distance, coins, highScore, isNewHighScore, onRestart, onMenu }: Props) {
+export function GameOver({ score, distance, coins, highScore, isNewHighScore, onRestart, onMenu, profile }: Props) {
+  const goal = profile ? nearestUpgrade(profile) : null;
   return (
     <motion.div
       initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
@@ -37,6 +40,14 @@ export function GameOver({ score, distance, coins, highScore, isNewHighScore, on
       <div className="mt-6 flex flex-col gap-2 w-full max-w-sm">
         <Button size="lg" onClick={onRestart} className="font-cinzel"><RotateCcw className="mr-2" /> Play Again</Button>
         <Button variant="outline" onClick={onMenu} className="font-cinzel"><Home className="mr-2" /> Main Menu</Button>
+        {goal && (
+          <div className="mt-2 border-t border-border pt-4 text-center space-y-1">
+            <p className="text-xs uppercase font-bold text-primary">{goal.remaining === 0 ? "Upgrade ready" : "Next run goal"}</p>
+            <p className="font-cinzel font-bold">{goal.title}{goal.nextLevel !== null ? ` · Lv ${goal.nextLevel}` : ""}</p>
+            <p className="text-sm text-muted-foreground tabular-nums">{goal.cost.toLocaleString()} coins{goal.nextDuration !== null ? ` · ${goal.nextDuration}s` : ""}</p>
+            {goal.remaining > 0 && <p className="text-sm tabular-nums">You need {goal.remaining.toLocaleString()} more</p>}
+          </div>
+        )}
         <Button asChild variant="ghost"><Link to="/shop"><ShoppingBag className="mr-2 w-4 h-4" />Visit Shop</Link></Button>
       </div>
       </div>
