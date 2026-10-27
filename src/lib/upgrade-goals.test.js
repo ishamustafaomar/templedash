@@ -1,7 +1,7 @@
 import { describe, expect, test } from "bun:test";
-import { levelCost, nearestUpgrade, upgradeDetails, type UpgradeProfile } from "./upgrade-goals";
+import { levelCost, nearestUpgrade, upgradeDetails } from "./upgrade-goals";
 
-const profile: UpgradeProfile = {
+const profile = {
   total_coins: 50, shield_level: 1, magnet_level: 1, speed_level: 1,
   invincibility_level: 1, coin_multiplier: false, head_start: false,
 };
@@ -12,7 +12,7 @@ describe("upgrade goals", () => {
   });
   test("next durations match the existing base plus two seconds per upgrade", () => {
     expect(["shield_level", "magnet_level", "speed_level", "invincibility_level"].map(
-      (field) => upgradeDetails(field as "shield_level", profile)?.nextDuration,
+      (field) => upgradeDetails(field, profile)?.nextDuration,
     )).toEqual([6, 8, 5, 6]);
   });
   test("affordable goals take priority and need no more coins", () => {
